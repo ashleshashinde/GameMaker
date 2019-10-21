@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StickReaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.behavior</a> &gt; <span class="el_source">StickReaction.java</span></div><h1>StickReaction.java</h1><pre class="source lang-java linenums">package com.gamemaker.behavior;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import javax.swing.JPanel;
+
+import com.gamemaker.model.Component;
+import com.gamemaker.model.ComponentGroup;
+
+<span class="fc" id="L14">public class StickReaction implements Reaction, KeyListener {</span>
+	
+	private static final long serialVersionUID = 1L;
+	private boolean moveLeft;
+	private boolean moveRight;
+	private boolean moveUp;
+	private boolean moveDown;
+	private int leftMovement;
+	private int rightMovement;
+	private int upMovement;
+	private int downMovement;
+	
+	@Override
+	public void react(Component activeComponent, ComponentGroup group) throws InterruptedException {
+		
+		//System.out.println(&quot;React Method oF component called&quot;);
+
+<span class="fc" id="L31">		Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = group.getComponentMap().entrySet().iterator();</span>
+<span class="fc" id="L32">		PlaySound playSound = new PlaySound(&quot;bounce.wav&quot;);</span>
+	
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		while(componentIterator.hasNext()) {</span>
+<span class="fc" id="L35">			Component passiveComponent = componentIterator.next().getValue();</span>
+			
+			// Checking if try to apply this reaction for same component in the iterator
+<span class="fc bfc" id="L38" title="All 2 branches covered.">			if (activeComponent == passiveComponent)</span>
+<span class="fc" id="L39">				continue; // skip the component itself</span>
+
+<span class="fc" id="L41">			Rectangle2D activeBounds = activeComponent.getShape().getBounds2D();</span>
+<span class="fc" id="L42">			Rectangle2D passiveBounds = passiveComponent.getShape().getBounds2D();</span>
+<span class="fc" id="L43">			Rectangle2D insect = passiveBounds.createIntersection(activeBounds);</span>
+			
+<span class="fc" id="L45">			Double activeX = activeBounds.getX();</span>
+<span class="fc" id="L46">			Double activeY = activeBounds.getY();</span>
+<span class="fc" id="L47">			Double activeMaxX = activeBounds.getMaxX();</span>
+<span class="fc" id="L48">			Double activeMaxY = activeBounds.getMaxY();</span>
+<span class="fc" id="L49">			Double activeWidth = activeBounds.getWidth();</span>
+<span class="fc" id="L50">			Double activeHeight = activeBounds.getHeight();</span>
+			
+<span class="fc" id="L52">			Double passiveX = passiveBounds.getX();</span>
+<span class="fc" id="L53">			Double passiveY = passiveBounds.getY();</span>
+<span class="fc" id="L54">			Double passiveMaxX = passiveBounds.getMaxX();</span>
+<span class="fc" id="L55">			Double passiveMaxY = passiveBounds.getMaxY();</span>
+			
+			
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">			if (activeBounds.intersects(passiveBounds))</span>
+			{
+				//System.out.println(&quot;Active and Passive intersection&quot;);
+<span class="fc" id="L61">				activeComponent.setStatus(&quot;sticked&quot;);</span>
+<span class="fc" id="L62">				passiveComponent.setPositionX(activeComponent.getPositionX());</span>
+				//passiveComponent.setPositionY(activeComponent.getPositionY());
+				//VerticalMovement autoMove = (VerticalMovement)passiveComponent.getMovement();
+				//AutomaticMovement activeAutoMove = (AutomaticMovement)activeComponent.getMovement();		
+			}
+<span class="fc" id="L67">		}</span>
+<span class="fc" id="L68">	}</span>
+	
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+<span class="nc" id="L72">		keyEventHelper(arg0.getKeyCode(), true);</span>
+<span class="nc" id="L73">	}</span>
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+<span class="nc" id="L77">		keyEventHelper(arg0.getKeyCode(), false);</span>
+<span class="nc" id="L78">	}</span>
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// Not used
+		
+<span class="nc" id="L84">	}</span>
+	
+	private void keyEventHelper(int keyCode, boolean flag) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">		if (keyCode == leftMovement) {</span>
+<span class="nc" id="L88">			this.moveLeft = flag;</span>
+		}
+<span class="nc bnc" id="L90" title="All 2 branches missed.">		if (keyCode == rightMovement) {</span>
+<span class="nc" id="L91">			this.moveRight = flag;</span>
+		}
+<span class="nc bnc" id="L93" title="All 2 branches missed.">		if (keyCode == upMovement) {</span>
+<span class="nc" id="L94">			this.moveUp = flag;</span>
+		}
+<span class="nc bnc" id="L96" title="All 2 branches missed.">		if (keyCode == downMovement) {</span>
+<span class="nc" id="L97">			this.moveDown = flag;</span>
+		}
+<span class="nc" id="L99">	}</span>
+
+	@Override
+	public void reactNew(Component activeComponent, Component passiveComponent, JPanel panel) throws InterruptedException {
+		// TODO Auto-generated method stub
+<span class="fc" id="L104">		Rectangle2D activeBounds = activeComponent.getShape().getBounds2D();</span>
+<span class="fc" id="L105">		Rectangle2D passiveBounds = passiveComponent.getShape().getBounds2D();</span>
+<span class="fc" id="L106">		Rectangle2D insect = passiveBounds.createIntersection(activeBounds);</span>
+		
+<span class="fc" id="L108">		Double activeX = activeBounds.getX();</span>
+<span class="fc" id="L109">		Double activeY = activeBounds.getY();</span>
+<span class="fc" id="L110">		Double activeMaxX = activeBounds.getMaxX();</span>
+<span class="fc" id="L111">		Double activeMaxY = activeBounds.getMaxY();</span>
+<span class="fc" id="L112">		Double activeWidth = activeBounds.getWidth();</span>
+<span class="fc" id="L113">		Double activeHeight = activeBounds.getHeight();</span>
+		
+<span class="fc" id="L115">		Double passiveX = passiveBounds.getX();</span>
+<span class="fc" id="L116">		Double passiveY = passiveBounds.getY();</span>
+<span class="fc" id="L117">		Double passiveMaxX = passiveBounds.getMaxX();</span>
+<span class="fc" id="L118">		Double passiveMaxY = passiveBounds.getMaxY();</span>
+		
+		
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">		if (activeBounds.intersects(passiveBounds))</span>
+		{
+			//System.out.println(&quot;Active and Passive intersection&quot;);
+<span class="fc" id="L124">			activeComponent.setStatus(&quot;sticked&quot;);</span>
+<span class="fc" id="L125">			passiveComponent.setPositionX(activeComponent.getPositionX());</span>
+			//passiveComponent.setPositionY(activeComponent.getPositionY());
+			//VerticalMovement autoMove = (VerticalMovement)passiveComponent.getMovement();
+			//AutomaticMovement activeAutoMove = (AutomaticMovement)activeComponent.getMovement();		
+		}
+		
+<span class="fc" id="L131">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

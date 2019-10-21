@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0+" codebase="http://localhost:8080/" href="OOSD.jnlp">
+ 
+     <information>
+          <title>GameMaker</title>
+          <vendor>OOSD</vendor>
+          <homepage href="http://localhost:8080/" />
+          <description>Game Maker</description>
+     </information>
+ 
+     <security>
+          <all-permissions/>
+     </security>
+ 
+     <resources>
+          <j2se version="1.6+" />
+          <jar href="OOSD.jar" />
+     </resources>
+ 
+     <application-desc main-class="com.gamemaker.Main" />
+</jnlp>

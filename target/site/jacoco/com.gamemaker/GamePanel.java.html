@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GamePanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker</a> &gt; <span class="el_source">GamePanel.java</span></div><h1>GamePanel.java</h1><pre class="source lang-java linenums">package com.gamemaker;
+
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import org.apache.log4j.Logger;
+
+import com.gamemaker.behavior.Reaction;
+import com.gamemaker.model.Component;
+import com.gamemaker.model.ComponentGroup;
+
+public class GamePanel extends JPanel implements MouseListener, MouseMotionListener {
+	private static final long serialVersionUID = 1L;
+<span class="fc" id="L36">	private static final Logger logger = Logger.getLogger(GamePanel.class);</span>
+<span class="fc" id="L37">	private transient Graphics2D graphobj = null;</span>
+	private ComponentGroup componentGroup;
+	private Timer myTimer;
+
+	private Component selectedShape;
+	private double widthDifference;
+	private double heightDifference;
+	private boolean drag;
+	private Cursor def;
+	private Cursor move;
+	private BufferedImage image;
+<span class="fc" id="L48">	private boolean flag = false;</span>
+<span class="fc" id="L49">	private boolean isPaused  = true;</span>
+	
+<span class="fc" id="L51">	private boolean isSetBgColor = true;</span>
+
+	public BufferedImage getImage() {
+<span class="nc" id="L54">		return image;</span>
+	}
+
+	public void setImage(BufferedImage image, boolean flag) {
+<span class="nc" id="L58">		System.out.println(&quot;background image set&quot;);</span>
+<span class="nc" id="L59">		this.image = image;</span>
+<span class="nc" id="L60">		this.flag = flag;</span>
+<span class="nc" id="L61">	}</span>
+
+	public void removeImage(boolean flag)
+	{
+<span class="nc" id="L65">		this.flag = flag;</span>
+<span class="nc" id="L66">	}</span>
+<span class="fc" id="L67">	public GamePanel() {</span>
+<span class="fc" id="L68">			addMouseListener(this);</span>
+<span class="fc" id="L69">			addMouseMotionListener(this);</span>
+<span class="fc" id="L70">			drag = true;</span>
+<span class="fc" id="L71">			def = new Cursor(Cursor.DEFAULT_CURSOR);</span>
+<span class="fc" id="L72">			move = new Cursor(Cursor.MOVE_CURSOR);</span>
+<span class="fc" id="L73">	}</span>
+	
+	public void drawComponents(ComponentGroup group) {
+<span class="fc" id="L76">		this.setBackground(group.getColor());</span>
+		try
+		{
+			//this.setImage(ImageIO.read(group.getFile()), true);
+<span class="fc" id="L80">			componentGroup = group;</span>
+<span class="fc" id="L81">			repaint();</span>
+		}
+<span class="nc" id="L83">		catch (Exception e)</span>
+		{
+<span class="nc" id="L85">			e.printStackTrace();</span>
+<span class="fc" id="L86">		}</span>
+<span class="fc" id="L87">	}</span>
+
+	@Override // Called Automatically when Jpanel is set visible
+	public void paintComponent(Graphics g) {
+<span class="nc" id="L91">		super.paintComponent(g);</span>
+<span class="nc" id="L92">		graphobj = (Graphics2D) g;</span>
+		//flag false bgvolor false
+<span class="nc" id="L94">		System.out.println(&quot;paint called&quot;);</span>
+<span class="nc bnc" id="L95" title="All 4 branches missed.">		if (!flag &amp;&amp; !isSetBgColor)		</span>
+		{     
+<span class="nc" id="L97">			this.setBackground(Color.white);</span>
+		}  
+<span class="nc bnc" id="L99" title="All 2 branches missed.">		else if (flag)</span>
+		{
+<span class="nc" id="L101">			g.drawImage(image, 0, 0, getWidth(), getHeight(), this); </span>
+			//isSetBgColor = false;
+<span class="nc" id="L103">			System.out.println(&quot;setting backfrounf&quot;);</span>
+
+		}
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		if (componentGroup != null)</span>
+		{
+			
+<span class="nc" id="L110">			componentGroup.draw(graphobj);</span>
+		}
+
+<span class="nc" id="L113">	}</span>
+
+	public void startGame() {
+		
+<span class="nc" id="L117">		this.setFocusable(true);</span>
+<span class="nc" id="L118">		this.requestFocus();</span>
+<span class="nc" id="L119">		GamePanel panel=this;</span>
+<span class="nc" id="L120">		this.setIsPaused(false);</span>
+		// adding event handler for movement of components
+<span class="nc" id="L122">		Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = componentGroup.getComponentMap().entrySet().iterator();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">		while (componentIterator.hasNext()) {</span>
+<span class="nc" id="L124">			Component component = componentIterator.next().getValue();</span>
+<span class="nc" id="L125">			this.addKeyListener((KeyListener) component.getMovement());</span>
+<span class="nc" id="L126">			this.addKeyListener((KeyListener) component.getAction());</span>
+<span class="nc" id="L127">			this.addKeyListener((KeyListener) component.getBoundaryInteraction());</span>
+			//add keyListner to every reaction the current component has with other components
+<span class="nc" id="L129">			HashMap&lt;Component,Reaction &gt; map = component.getReactionsMap();			</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            for (Map.Entry&lt;Component,Reaction&gt; comp : map.entrySet()) {</span>
+				
+<span class="nc bnc" id="L132" title="All 2 branches missed.">				if (comp.getKey()!=null)</span>
+<span class="nc" id="L133">					this.addKeyListener((KeyListener) comp.getValue());</span>
+<span class="nc" id="L134">			}</span>
+<span class="nc" id="L135">		}</span>
+<span class="nc" id="L136">			myTimer = new Timer(50, new ActionListener() {</span>
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+<span class="nc" id="L141">						componentGroup.update(graphobj,panel);</span>
+<span class="nc" id="L142">					} catch (InterruptedException e) {</span>
+<span class="nc" id="L143">						Thread.currentThread().interrupt();</span>
+<span class="nc" id="L144">						logger.debug(e.getMessage());</span>
+<span class="nc" id="L145">					}</span>
+<span class="nc" id="L146">					repaint();</span>
+<span class="nc" id="L147">				}</span>
+			});
+			
+
+		
+<span class="nc" id="L152">		myTimer.start();</span>
+<span class="nc" id="L153">	}</span>
+	
+	public void isSetBgColor(boolean isSetBgColor)
+	{
+<span class="nc" id="L157">		isSetBgColor = true;</span>
+<span class="nc" id="L158">	}</span>
+
+	public void stopGame(String status)
+	{
+<span class="nc" id="L162">        JFrame frame = new JFrame(&quot;GAME OVER&quot;);</span>
+<span class="nc" id="L163">        JOptionPane.showMessageDialog(frame, status);</span>
+<span class="nc" id="L164">        frame.setSize(200,200);</span>
+<span class="nc" id="L165">		myTimer.stop();</span>
+<span class="nc" id="L166">		setDrag(true);</span>
+<span class="nc" id="L167">	}</span>
+	
+	public void setDrag(boolean flag) {
+<span class="nc" id="L170">		drag = flag;</span>
+<span class="nc" id="L171">	}</span>
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">		if(!drag)</span>
+<span class="nc" id="L176">			return;</span>
+<span class="nc" id="L177">		int x = e.getX();</span>
+<span class="nc" id="L178">		int y = e.getY();</span>
+<span class="nc bnc" id="L179" title="All 4 branches missed.">		if((x-widthDifference) &gt;=0 &amp;&amp; (x+ selectedShape.getShape().getBounds2D().getWidth() - widthDifference) &lt;= this.getWidth())</span>
+<span class="nc" id="L180">			selectedShape.setPositionX(x - widthDifference);</span>
+<span class="nc bnc" id="L181" title="All 4 branches missed.">		if((y-heightDifference) &gt;=0 &amp;&amp; (y+ selectedShape.getShape().getBounds2D().getHeight() - heightDifference) &lt;= this.getHeight())</span>
+<span class="nc" id="L182">			selectedShape.setPositionY(y - heightDifference);</span>
+<span class="nc" id="L183">		repaint();</span>
+<span class="nc" id="L184">	}</span>
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// Intentionally left blank
+
+<span class="nc" id="L190">	}</span>
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+<span class="nc" id="L194">		EditPanel editPanel = new EditPanel();</span>
+
+<span class="nc" id="L196">		Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = componentGroup.getComponentMap().entrySet().iterator();</span>
+<span class="nc bnc" id="L197" title="All 2 branches missed.">		while (componentIterator.hasNext()) {</span>
+<span class="nc" id="L198">			Component component = componentIterator.next().getValue();</span>
+<span class="nc bnc" id="L199" title="All 2 branches missed.">			if( component.getShape().contains(e.getX(), e.getY())) {</span>
+<span class="nc" id="L200">				editPanel.buildPanel(componentGroup, this,component);</span>
+			}
+<span class="nc" id="L202">		}</span>
+<span class="nc" id="L203">	}</span>
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		//  Intentionally left blank
+<span class="nc" id="L208">	}</span>
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// Intentionally left blank
+<span class="nc" id="L213">	}</span>
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+<span class="nc bnc" id="L217" title="All 2 branches missed.">		if(!drag)</span>
+<span class="nc" id="L218">			return;</span>
+<span class="nc" id="L219">		Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = componentGroup.getComponentMap().entrySet().iterator();</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">		while (componentIterator.hasNext()) {</span>
+<span class="nc" id="L221">			Component component = componentIterator.next().getValue();</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">			if( component.getShape().contains(e.getX(), e.getY())) {</span>
+<span class="nc" id="L223">				selectedShape = component;</span>
+<span class="nc" id="L224">				widthDifference = e.getX() - selectedShape.getPositionX();</span>
+<span class="nc" id="L225">				heightDifference = e.getY() - selectedShape.getPositionY();</span>
+<span class="nc" id="L226">				this.setCursor(move);</span>
+<span class="nc" id="L227">				break;</span>
+			}
+<span class="nc" id="L229">		}</span>
+<span class="nc" id="L230">	}</span>
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+<span class="nc" id="L234">		selectedShape = null;</span>
+<span class="nc" id="L235">		widthDifference =0;</span>
+<span class="nc" id="L236">		heightDifference = 0;</span>
+<span class="nc" id="L237">		this.setCursor(def);</span>
+<span class="nc" id="L238">	}</span>
+	
+	public void pauseGame()
+	{
+<span class="nc bnc" id="L242" title="All 2 branches missed.">		if(myTimer!=null)</span>
+<span class="nc" id="L243">			myTimer.stop();</span>
+<span class="nc" id="L244">		setDrag(true);</span>
+<span class="nc" id="L245">	}</span>
+	public void resumeGame()
+	{
+<span class="nc bnc" id="L248" title="All 2 branches missed.">		if(myTimer!=null)</span>
+<span class="nc" id="L249">			myTimer.start();</span>
+<span class="nc" id="L250">		setDrag(false);</span>
+<span class="nc" id="L251">	}</span>
+	public boolean getIsPaused() {
+<span class="nc" id="L253">		return isPaused;</span>
+	}
+	public void setIsPaused(boolean pause) {
+<span class="nc" id="L256">		isPaused = pause;</span>
+<span class="nc" id="L257">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HorizontalMovement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.behavior</a> &gt; <span class="el_source">HorizontalMovement.java</span></div><h1>HorizontalMovement.java</h1><pre class="source lang-java linenums">package com.gamemaker.behavior;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import com.gamemaker.model.Component;
+
+public class HorizontalMovement implements Movement, KeyListener {
+
+	private static final long serialVersionUID = 1L;
+	private int speedX;
+	private int updateSpeed;
+	private boolean isLeft;
+	private boolean isRight;
+	private String control;
+	private int leftMovement;
+	private int rightMovement;
+
+<span class="fc" id="L19">	public HorizontalMovement(int speedX, String control) {</span>
+<span class="fc" id="L20">		this.speedX = speedX;</span>
+<span class="fc" id="L21">		this.control = control;</span>
+<span class="fc" id="L22">		this.updateSpeed = speedX;</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">		if(control.equals(&quot;arrows&quot;))</span>
+		{
+<span class="fc" id="L25">			this.leftMovement=KeyEvent.VK_LEFT;</span>
+<span class="fc" id="L26">			this.rightMovement=KeyEvent.VK_RIGHT;</span>
+		}
+<span class="fc bfc" id="L28" title="All 2 branches covered.">		if(control.equals(&quot;keys&quot;))</span>
+		{
+<span class="fc" id="L30">			this.leftMovement=KeyEvent.VK_A;</span>
+<span class="fc" id="L31">			this.rightMovement=KeyEvent.VK_D;</span>
+		}
+<span class="fc" id="L33">	}</span>
+
+	public String getControl() {
+<span class="fc" id="L36">		return control;</span>
+	}
+
+	public void setControl(String control) {
+<span class="nc" id="L40">		this.control = control;</span>
+<span class="nc" id="L41">	}</span>
+
+	@Override
+	public void move(Component component) {
+<span class="nc bnc" id="L45" title="All 2 branches missed.">		if (isLeft) {</span>
+<span class="nc" id="L46">			component.setPositionX(component.getPositionX() - speedX);</span>
+<span class="nc" id="L47">			speedX = 0;</span>
+		}
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		if (isRight) {</span>
+<span class="nc" id="L50">			component.setPositionX(component.getPositionX() + speedX);</span>
+<span class="nc" id="L51">			speedX = 0;</span>
+		}
+<span class="nc" id="L53">	}</span>
+
+	public int getSpeedX() {
+<span class="fc" id="L56">		return speedX;</span>
+	}
+
+	public void setSpeedX(int speedX) {
+<span class="fc" id="L60">		this.speedX = speedX;</span>
+<span class="fc" id="L61">	}</span>
+
+	public boolean isLeft() {
+<span class="fc" id="L64">		return isLeft;</span>
+	}
+
+	public void setLeft(boolean isLeft) {
+<span class="nc" id="L68">		this.isLeft = isLeft;</span>
+<span class="nc" id="L69">	}</span>
+
+	public boolean isRight() {
+<span class="fc" id="L72">		return isRight;</span>
+	}
+
+	public void setRight(boolean isRight) {
+<span class="nc" id="L76">		this.isRight = isRight;</span>
+<span class="nc" id="L77">	}</span>
+	
+	public int getLeftMovement() {
+<span class="nc" id="L80">		return leftMovement;</span>
+	}
+
+	public int getRightMovement() {
+<span class="nc" id="L84">		return rightMovement;</span>
+	}
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+<span class="fc" id="L89">		keyEventHelper(arg0.getKeyCode(), true);</span>
+<span class="fc" id="L90">	}</span>
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+<span class="fc" id="L94">		keyEventHelper(arg0.getKeyCode(), false);</span>
+<span class="fc" id="L95">	}</span>
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// Not used
+<span class="nc" id="L100">	}</span>
+
+	@Override
+	public int getSpeedY() {
+<span class="nc" id="L104">		return 0;</span>
+	}
+	
+	private void keyEventHelper(int keyCode, boolean flag) {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">		if (keyCode == leftMovement) {</span>
+<span class="fc" id="L109">			this.isLeft = flag;</span>
+		}
+<span class="fc bfc" id="L111" title="All 2 branches covered.">		if (keyCode == rightMovement) {</span>
+<span class="fc" id="L112">			this.isRight = flag;</span>
+		}
+<span class="fc" id="L114">		speedX = updateSpeed;</span>
+<span class="fc" id="L115">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

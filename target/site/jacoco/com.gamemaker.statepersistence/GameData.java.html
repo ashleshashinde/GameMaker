@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameData.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.statepersistence</a> &gt; <span class="el_source">GameData.java</span></div><h1>GameData.java</h1><pre class="source lang-java linenums">package com.gamemaker.statepersistence;
+
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.Serializable;
+import java.util.Map;
+
+import com.gamemaker.behavior.Reaction;
+import com.gamemaker.model.Component;
+
+public class GameData implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	private Map&lt;String, Component&gt; componentMap;
+	private Map&lt;String, Reaction&gt; winMap;
+	private Map&lt;String, Reaction&gt; loseMap;
+	private Color backgroundColor;
+	//private BufferedImage backGroundImage;
+	private File file;
+ 
+	
+
+
+	public GameData(Map&lt;String, Component&gt; componentMap, Map&lt;String, Reaction&gt; winMap,
+<span class="fc" id="L26">			Map&lt;String, Reaction&gt; loseMap, Color color, File file) {</span>
+<span class="fc" id="L27">		this.componentMap = componentMap;</span>
+<span class="fc" id="L28">		this.winMap = winMap;</span>
+<span class="fc" id="L29">		this.loseMap = loseMap;</span>
+<span class="fc" id="L30">		this.backgroundColor = color;</span>
+<span class="fc" id="L31">		this.file = file;</span>
+<span class="fc" id="L32">	}</span>
+	
+	public Map&lt;String, Component&gt; getComponentMap() {
+<span class="nc" id="L35">		return componentMap;</span>
+	}
+	public void setComponentMap(Map&lt;String, Component&gt; componentMap) {
+<span class="nc" id="L38">		this.componentMap = componentMap;</span>
+<span class="nc" id="L39">	}</span>
+	public Map&lt;String, Reaction&gt; getWinMap() {
+<span class="nc" id="L41">		return winMap;</span>
+	}
+	public void setWinMap(Map&lt;String, Reaction&gt; winMap) {
+<span class="nc" id="L44">		this.winMap = winMap;</span>
+<span class="nc" id="L45">	}</span>
+	public Map&lt;String, Reaction&gt; getLoseMap() {
+<span class="nc" id="L47">		return loseMap;</span>
+	}
+	public void setLoseMap(Map&lt;String, Reaction&gt; loseMap) {
+<span class="nc" id="L50">		this.loseMap = loseMap;</span>
+<span class="nc" id="L51">	}</span>
+
+	public Color getBackgroundColor() {
+<span class="nc" id="L54">		return backgroundColor;</span>
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+<span class="nc" id="L58">		this.backgroundColor = backgroundColor;</span>
+<span class="nc" id="L59">	}</span>
+	
+	public File getFile() {
+<span class="nc" id="L62">		return file;</span>
+	}
+
+	public void setFile(File file) {
+<span class="nc" id="L66">		this.file = file;</span>
+<span class="nc" id="L67">	}</span>
+//
+//	public BufferedImage getBackGroundImage() {
+//		return backGroundImage;
+//	}
+//
+//	public void setBackGroundImage(BufferedImage backGroundImage) {
+//		this.backGroundImage = backGroundImage;
+//	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

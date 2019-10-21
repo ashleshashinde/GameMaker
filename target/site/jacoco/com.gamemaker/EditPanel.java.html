@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EditPanel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker</a> &gt; <span class="el_source">EditPanel.java</span></div><h1>EditPanel.java</h1><pre class="source lang-java linenums">package com.gamemaker;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
+
+import com.gamemaker.behavior.AutomaticMovement;
+import com.gamemaker.behavior.BounceBoundaryInteraction;
+import com.gamemaker.behavior.BounceReaction;
+import com.gamemaker.behavior.BoundaryInteraction;
+import com.gamemaker.behavior.ExplodeReaction;
+import com.gamemaker.behavior.HorizontalMovement;
+import com.gamemaker.behavior.LeaveForeverBoundaryInteraction;
+import com.gamemaker.behavior.Movement;
+import com.gamemaker.behavior.NoBoundaryInteraction;
+import com.gamemaker.behavior.NoMovement;
+import com.gamemaker.behavior.NoReaction;
+import com.gamemaker.behavior.Reaction;
+import com.gamemaker.behavior.VerticalMovement;
+import com.gamemaker.model.Component;
+import com.gamemaker.model.ComponentGroup;
+
+/**
+ * @author Nisha G
+ *
+ */
+<span class="fc" id="L35">public class EditPanel extends JFrame {</span>
+	private Component currentComponent;
+	private ComponentGroup group;
+	private JLabel positionXLabel;
+	private JLabel positionYLabel;
+	private JTextField positionX;
+	private JTextField positionY;
+	private JLabel heightLabel;
+	private JLabel widthLabel;
+	private JTextField componentWidth;
+	private JTextField componentHeight;
+	private JTextField speedX;
+	private JTextField speedY;
+	private JLabel speedXLabel;
+	private JLabel speedYLabel;
+	private GamePanel gamePanel;
+	private JButton updateButton;
+	private JButton deleteButton;
+	private JComboBox movementBox;
+	private Movement newMovement;
+	private JComboBox boundaryBox;
+	private JComboBox eventBox;
+	private BoundaryInteraction boundaryInteraction;
+	private Reaction reaction;
+	private JLabel componentName;
+	private static final String ARROWS = &quot;arrows&quot;;
+	private static final String KEYS = &quot;keys&quot;;
+
+	public void buildUI() {
+<span class="nc" id="L64">		componentName = new JLabel();</span>
+<span class="nc" id="L65">		componentName.setBounds(146, 50, 60, 16);</span>
+
+<span class="nc" id="L67">		positionXLabel = new JLabel(&quot;X:&quot;);</span>
+<span class="nc" id="L68">		positionX = new JTextField();</span>
+<span class="nc" id="L69">		positionXLabel.setBounds(116, 107, 60, 16);</span>
+<span class="nc" id="L70">		positionX.setBounds(176, 107, 43, 16);</span>
+
+<span class="nc" id="L72">		positionYLabel = new JLabel(&quot;Y:&quot;);</span>
+<span class="nc" id="L73">		positionY = new JTextField();</span>
+<span class="nc" id="L74">		positionYLabel.setBounds(219, 107, 60, 16);</span>
+<span class="nc" id="L75">		positionY.setBounds(279, 107, 43, 16);</span>
+
+<span class="nc" id="L77">		widthLabel = new JLabel(&quot;Width:&quot;);</span>
+<span class="nc" id="L78">		componentWidth = new JTextField();</span>
+<span class="nc" id="L79">		widthLabel.setBounds(116, 137, 60, 16);</span>
+<span class="nc" id="L80">		componentWidth.setBounds(176, 137, 43, 16);</span>
+
+<span class="nc" id="L82">		heightLabel = new JLabel(&quot;Height:&quot;);</span>
+<span class="nc" id="L83">		componentHeight = new JTextField();</span>
+<span class="nc" id="L84">		heightLabel.setBounds(219, 137, 60, 16);</span>
+<span class="nc" id="L85">		componentHeight.setBounds(279, 137, 43, 16);</span>
+
+<span class="nc" id="L87">		speedXLabel = new JLabel(&quot;Speed X:&quot;);</span>
+<span class="nc" id="L88">		speedX = new JTextField();</span>
+<span class="nc" id="L89">		speedXLabel.setBounds(116, 167, 60, 16);</span>
+<span class="nc" id="L90">		speedX.setBounds(176, 167, 43, 16);</span>
+
+<span class="nc" id="L92">		speedYLabel = new JLabel(&quot;Speed Y:&quot;);</span>
+<span class="nc" id="L93">		speedY = new JTextField();</span>
+<span class="nc" id="L94">		speedYLabel.setBounds(220, 167, 60, 16);</span>
+<span class="nc" id="L95">		speedY.setBounds(280, 167, 43, 16);</span>
+
+<span class="nc" id="L97">		movementBox = new JComboBox();</span>
+<span class="nc" id="L98">		movementBox.setBounds(171, 207, 113, 22);</span>
+<span class="nc" id="L99">		String[] movements = { &quot;No Movement&quot;, &quot;Automatic Movement&quot;, &quot;Horizontal (Arrows)&quot;, &quot;Horizontal (A,D)&quot;,</span>
+				&quot;Vertical (Arrows)&quot;, &quot;Vertical (W,S)&quot; };
+<span class="nc" id="L101">		movementBox.setModel(new DefaultComboBoxModel(movements));</span>
+
+<span class="nc" id="L103">		updateButton = new JButton(&quot;Update&quot;);</span>
+<span class="nc" id="L104">		updateButton.setBounds(136, 277, 83, 30);</span>
+
+<span class="nc" id="L106">		deleteButton = new JButton(&quot;Delete&quot;);</span>
+<span class="nc" id="L107">		deleteButton.setBounds(226, 277, 83, 30);</span>
+
+<span class="nc" id="L109">		boundaryBox = new JComboBox();</span>
+<span class="nc" id="L110">		boundaryBox.setBounds(300, 207, 113, 22);</span>
+<span class="nc" id="L111">		String[] boundaryOptions = { &quot;No Boundary Event&quot;, &quot;Bounce&quot;, &quot;Leave Forever&quot; };</span>
+<span class="nc" id="L112">		boundaryBox.setModel(new DefaultComboBoxModel(boundaryOptions));</span>
+
+<span class="nc" id="L114">		eventBox = new JComboBox();</span>
+<span class="nc" id="L115">		eventBox.setBounds(40, 207, 113, 22);</span>
+<span class="nc" id="L116">		String[] reactions = { &quot;No Event&quot;, &quot;Bounce&quot;, &quot;Explode&quot; };</span>
+<span class="nc" id="L117">		eventBox.setModel(new DefaultComboBoxModel(reactions));</span>
+<span class="nc" id="L118">	}</span>
+
+	public void buildPanel(ComponentGroup group, GamePanel gamePanel, Component component) {
+<span class="nc" id="L121">		this.group = group;</span>
+<span class="nc" id="L122">		this.gamePanel = gamePanel;</span>
+<span class="nc" id="L123">		this.currentComponent = component;</span>
+
+<span class="nc" id="L125">		this.setResizable(false);</span>
+<span class="nc" id="L126">		this.setBounds(100, 100, 450, 350);</span>
+
+<span class="nc" id="L128">		JPanel contentPane = new JPanel();</span>
+<span class="nc" id="L129">		contentPane.setBounds(320, 0, 490, 610);</span>
+<span class="nc" id="L130">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="nc" id="L131">		contentPane.setLayout(null);</span>
+
+		// build the form UI
+<span class="nc" id="L134">		buildUI();</span>
+
+<span class="nc" id="L136">		componentName.setText(&quot;Edit: &quot; + currentComponent.getName());</span>
+<span class="nc" id="L137">		positionX.setText(Double.toString(currentComponent.getPositionX()));</span>
+<span class="nc" id="L138">		positionY.setText(Double.toString(currentComponent.getPositionY()));</span>
+
+<span class="nc" id="L140">		componentWidth.setText(Double.toString(currentComponent.getShape().getBounds().getWidth()));</span>
+<span class="nc" id="L141">		componentHeight.setText(Double.toString(currentComponent.getShape().getBounds().getHeight()));</span>
+
+<span class="nc" id="L143">		speedX.setText(Integer.toString(currentComponent.getMovement().getSpeedX()));</span>
+<span class="nc" id="L144">		speedY.setText(Integer.toString(currentComponent.getMovement().getSpeedY()));</span>
+
+<span class="nc" id="L146">		setMovementIndex();</span>
+<span class="nc" id="L147">		setBoundaryIndex();</span>
+<span class="nc" id="L148">		setEventIndex();</span>
+
+<span class="nc" id="L150">		updateButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L154">				switchMovement();</span>
+<span class="nc" id="L155">				switchBoundary();</span>
+<span class="nc" id="L156">				switchEvent();</span>
+
+<span class="nc" id="L158">				currentComponent.setPositionX(Double.parseDouble(positionX.getText()));</span>
+<span class="nc" id="L159">				currentComponent.setPositionY(Double.parseDouble(positionY.getText()));</span>
+<span class="nc" id="L160">				currentComponent.setHeight(Double.parseDouble(componentHeight.getText()));</span>
+<span class="nc" id="L161">				currentComponent.setWidth(Double.parseDouble(componentWidth.getText()));</span>
+<span class="nc" id="L162">				currentComponent.setMovement(newMovement);</span>
+<span class="nc" id="L163">				currentComponent.setBoundaryInteraction(boundaryInteraction);</span>
+<span class="nc" id="L164">				currentComponent.setReaction(reaction);</span>
+<span class="nc" id="L165">				gamePanel.drawComponents(group);</span>
+<span class="nc" id="L166">			}</span>
+		});
+
+<span class="nc" id="L169">		deleteButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// remove the component from the group
+<span class="nc" id="L174">				group.removeComponent(currentComponent);</span>
+<span class="nc" id="L175">				gamePanel.drawComponents(group);</span>
+<span class="nc" id="L176">			}</span>
+		});
+<span class="nc" id="L178">		contentPane.add(widthLabel);</span>
+<span class="nc" id="L179">		contentPane.add(heightLabel);</span>
+<span class="nc" id="L180">		contentPane.add(componentHeight);</span>
+<span class="nc" id="L181">		contentPane.add(componentWidth);</span>
+<span class="nc" id="L182">		contentPane.add(positionXLabel);</span>
+<span class="nc" id="L183">		contentPane.add(positionYLabel);</span>
+<span class="nc" id="L184">		contentPane.add(positionX);</span>
+<span class="nc" id="L185">		contentPane.add(positionY);</span>
+<span class="nc" id="L186">		contentPane.add(updateButton);</span>
+<span class="nc" id="L187">		contentPane.add(deleteButton);</span>
+<span class="nc" id="L188">		contentPane.add(movementBox);</span>
+<span class="nc" id="L189">		contentPane.add(speedXLabel);</span>
+<span class="nc" id="L190">		contentPane.add(speedYLabel);</span>
+<span class="nc" id="L191">		contentPane.add(speedX);</span>
+<span class="nc" id="L192">		contentPane.add(speedY);</span>
+<span class="nc" id="L193">		contentPane.add(boundaryBox);</span>
+<span class="nc" id="L194">		contentPane.add(eventBox);</span>
+<span class="nc" id="L195">		contentPane.add(componentName);</span>
+<span class="nc" id="L196">		this.add(contentPane);</span>
+<span class="nc" id="L197">		this.setVisible(true);</span>
+<span class="nc" id="L198">	}</span>
+
+	public void setBoundaryIndex() {
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		if (currentComponent.getBoundaryInteraction() instanceof NoBoundaryInteraction) {</span>
+<span class="fc" id="L202">			boundaryBox.setSelectedIndex(0);</span>
+		}
+
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		if (currentComponent.getBoundaryInteraction() instanceof BounceBoundaryInteraction) {</span>
+<span class="fc" id="L206">			boundaryBox.setSelectedIndex(1);</span>
+		}
+
+<span class="fc bfc" id="L209" title="All 2 branches covered.">		if (currentComponent.getBoundaryInteraction() instanceof LeaveForeverBoundaryInteraction) {</span>
+<span class="fc" id="L210">			boundaryBox.setSelectedIndex(2);</span>
+		}
+<span class="fc" id="L212">	}</span>
+
+	public void setMovementIndex() {
+<span class="fc bfc" id="L215" title="All 2 branches covered.">		if (currentComponent.getMovement() instanceof AutomaticMovement) {</span>
+<span class="fc" id="L216">			movementBox.setSelectedIndex(1);</span>
+		}
+
+<span class="fc bfc" id="L219" title="All 2 branches covered.">		if (currentComponent.getMovement() instanceof HorizontalMovement) {</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">			if (((HorizontalMovement) currentComponent.getMovement()).getControl().equals(ARROWS)) {</span>
+<span class="fc" id="L221">				movementBox.setSelectedIndex(2);</span>
+			} else {
+<span class="fc" id="L223">				movementBox.setSelectedIndex(3);</span>
+			}
+		}
+
+<span class="fc bfc" id="L227" title="All 2 branches covered.">		if (currentComponent.getMovement() instanceof VerticalMovement) {</span>
+<span class="fc bfc" id="L228" title="All 2 branches covered.">			if (((VerticalMovement) currentComponent.getMovement()).getControl().equals(ARROWS)) {</span>
+<span class="fc" id="L229">				movementBox.setSelectedIndex(4);</span>
+			} else {
+<span class="fc" id="L231">				movementBox.setSelectedIndex(5);</span>
+			}
+		}
+<span class="fc" id="L234">	}</span>
+
+	public void setEventIndex() {
+<span class="fc bfc" id="L237" title="All 2 branches covered.">		if (currentComponent.getReaction() instanceof NoReaction) {</span>
+<span class="fc" id="L238">			eventBox.setSelectedIndex(0);</span>
+		}
+<span class="fc bfc" id="L240" title="All 2 branches covered.">		if (currentComponent.getReaction() instanceof BounceReaction) {</span>
+<span class="fc" id="L241">			eventBox.setSelectedIndex(1);</span>
+		}
+<span class="fc bfc" id="L243" title="All 2 branches covered.">		if (currentComponent.getReaction() instanceof ExplodeReaction) {</span>
+<span class="fc" id="L244">			eventBox.setSelectedIndex(2);</span>
+		}
+<span class="fc" id="L246">	}</span>
+
+	public void switchMovement() {
+<span class="fc bfc" id="L249" title="All 6 branches covered.">		switch (movementBox.getSelectedIndex()) {</span>
+		case 1:
+<span class="fc" id="L251">			newMovement = new AutomaticMovement(Integer.parseInt(speedX.getText()), Integer.parseInt(speedY.getText()));</span>
+<span class="fc" id="L252">			break;</span>
+		case 2:
+<span class="fc" id="L254">			newMovement = new HorizontalMovement(Math.abs(Integer.parseInt(speedX.getText())), ARROWS);</span>
+<span class="fc" id="L255">			break;</span>
+		case 3:
+<span class="fc" id="L257">			newMovement = new HorizontalMovement(Math.abs(Integer.parseInt(speedX.getText())), KEYS);</span>
+<span class="fc" id="L258">			break;</span>
+		case 4:
+<span class="fc" id="L260">			newMovement = new VerticalMovement(Math.abs(Integer.parseInt(speedY.getText())), ARROWS);</span>
+<span class="fc" id="L261">			break;</span>
+		case 5:
+<span class="fc" id="L263">			newMovement = new VerticalMovement(Math.abs(Integer.parseInt(speedY.getText())), KEYS);</span>
+<span class="fc" id="L264">			break;</span>
+		default:
+<span class="fc" id="L266">			newMovement = new NoMovement();</span>
+		}
+<span class="fc" id="L268">	}</span>
+
+
+	public void switchBoundary() {
+<span class="pc bpc" id="L272" title="1 of 4 branches missed.">		switch (boundaryBox.getSelectedIndex()) {</span>
+		case 0:
+<span class="fc" id="L274">			boundaryInteraction = new NoBoundaryInteraction(gamePanel, group);</span>
+<span class="fc" id="L275">			break;</span>
+		case 1:
+<span class="fc" id="L277">			boundaryInteraction = new BounceBoundaryInteraction();</span>
+<span class="fc" id="L278">			break;</span>
+		case 2:
+<span class="fc" id="L280">			boundaryInteraction = new LeaveForeverBoundaryInteraction();</span>
+<span class="fc" id="L281">			break;</span>
+		default:
+<span class="nc" id="L283">			boundaryInteraction = new NoBoundaryInteraction(gamePanel, group);</span>
+		}
+<span class="fc" id="L285">	}</span>
+
+	public void switchEvent() {
+<span class="pc bpc" id="L288" title="1 of 4 branches missed.">		switch (eventBox.getSelectedIndex()) {</span>
+		case 0:
+<span class="fc" id="L290">			reaction = new NoReaction();</span>
+<span class="fc" id="L291">			break;</span>
+		case 1:
+<span class="fc" id="L293">			reaction = new BounceReaction();</span>
+<span class="fc" id="L294">			break;</span>
+		case 2:
+<span class="fc" id="L296">			reaction = new ExplodeReaction();</span>
+<span class="fc" id="L297">			break;</span>
+		default:
+<span class="nc" id="L299">			reaction = new NoReaction();</span>
+		}
+<span class="fc" id="L301">	}</span>
+
+	public Component getCurrentComponent() {
+<span class="nc" id="L304">		return currentComponent;</span>
+	}
+
+	public void setCurrentComponent(Component currentComponent) {
+<span class="fc" id="L308">		this.currentComponent = currentComponent;</span>
+<span class="fc" id="L309">	}</span>
+
+	public JComboBox getBoundaryBox() {
+<span class="fc" id="L312">		return boundaryBox;</span>
+	}
+
+	public void setBoundaryBox(JComboBox boundaryBox) {
+<span class="fc" id="L316">		this.boundaryBox = boundaryBox;</span>
+<span class="fc" id="L317">	}</span>
+
+	public JComboBox getMovementBox() {
+<span class="fc" id="L320">		return movementBox;</span>
+	}
+
+	public void setMovementBox(JComboBox movementBox) {
+<span class="fc" id="L324">		this.movementBox = movementBox;</span>
+<span class="fc" id="L325">	}</span>
+	
+	public JComboBox getEventBox() {
+<span class="fc" id="L328">		return eventBox;</span>
+	}
+
+	public void setEventBox(JComboBox eventBox) {
+<span class="fc" id="L332">		this.eventBox = eventBox;</span>
+<span class="fc" id="L333">	}</span>
+
+	public Movement getNewMovement() {
+<span class="fc" id="L336">		return newMovement;</span>
+	}
+
+	public void setNewMovement(Movement newMovement) {
+<span class="nc" id="L340">		this.newMovement = newMovement;</span>
+<span class="nc" id="L341">	}</span>
+
+	public Reaction getReaction() {
+<span class="fc" id="L344">		return reaction;</span>
+	}
+
+	public void setReaction(Reaction reaction) {
+<span class="nc" id="L348">		this.reaction = reaction;</span>
+<span class="nc" id="L349">	}</span>
+
+	public JTextField getSpeedX() {
+<span class="nc" id="L352">		return speedX;</span>
+	}
+
+	public void setSpeedX(JTextField speedX) {
+<span class="fc" id="L356">		this.speedX = speedX;</span>
+<span class="fc" id="L357">	}</span>
+
+	public JTextField getSpeedY() {
+<span class="nc" id="L360">		return speedY;</span>
+	}
+
+	public void setSpeedY(JTextField speedY) {
+<span class="fc" id="L364">		this.speedY = speedY;</span>
+<span class="fc" id="L365">	}</span>
+
+	public BoundaryInteraction getBoundaryInteraction() {
+<span class="fc" id="L368">		return boundaryInteraction;</span>
+	}
+
+	public void setBoundaryInteraction(BoundaryInteraction boundaryInteraction) {
+<span class="nc" id="L372">		this.boundaryInteraction = boundaryInteraction;</span>
+<span class="nc" id="L373">	}</span>
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

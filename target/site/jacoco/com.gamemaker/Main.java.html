@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package com.gamemaker;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+
+import org.apache.log4j.BasicConfigurator;
+
+<span class="nc" id="L15">public class Main extends JFrame {</span>
+	
+	private static final long serialVersionUID = 1L;
+	
+
+	public static void main(String[] args) {
+		
+		
+		
+<span class="nc" id="L24">		BasicConfigurator.configure(); // configuration of log4j.</span>
+<span class="nc" id="L25">		JFrame gameMaker = new JFrame(); // Initial Empty window opened. This the main JFrame</span>
+<span class="nc" id="L26">		gameMaker.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L27">		gameMaker.setResizable(false);</span>
+<span class="nc" id="L28">		gameMaker.setBounds(100, 100, 900, 800);</span>
+<span class="nc" id="L29">		JPanel contentPane = new JPanel();</span>
+<span class="nc" id="L30">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+<span class="nc" id="L31">		gameMaker.add(contentPane);</span>
+<span class="nc" id="L32">		contentPane.setLayout(null);</span>
+<span class="nc" id="L33">		gameMaker.setVisible(true);</span>
+		
+		
+		
+<span class="nc" id="L37">		GamePanel gamePanel = new GamePanel(); // This is the right side panel for playing the game</span>
+		
+<span class="nc" id="L39">		gamePanel.setBorder(new LineBorder(new Color(0, 0, 0)));</span>
+		//gamePanel.setBounds(320, 0, 490, 610);
+<span class="nc" id="L41">		gamePanel.setBounds(320, 20, 490, 600);</span>
+	
+<span class="nc" id="L43">		contentPane.add(gamePanel);</span>
+<span class="nc" id="L44">		gamePanel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L45">		gamePanel.setLayout(null);</span>
+<span class="nc" id="L46">		gamePanel.revalidate();</span>
+		
+<span class="nc" id="L48">		JButton pauseButton = new JButton(&quot;Pause&quot;);</span>
+<span class="nc" id="L49">		pauseButton.setBounds(400, 640, 150, 30);</span>
+<span class="nc" id="L50">		contentPane.add(pauseButton);</span>
+		//pauseButton.setFocusable(false);
+<span class="nc" id="L52">		pauseButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+<span class="nc bnc" id="L57" title="All 2 branches missed.">				if(!gamePanel.getIsPaused())</span>
+				{
+<span class="nc" id="L59">				    gamePanel.pauseGame();</span>
+<span class="nc" id="L60">				    gamePanel.setIsPaused(true);</span>
+				}
+				
+				else
+				{
+<span class="nc" id="L65">					gamePanel.resumeGame();</span>
+<span class="nc" id="L66">					gamePanel.setIsPaused(false);</span>
+				}
+				
+					
+<span class="nc" id="L70">			}</span>
+			
+		});
+		
+		
+<span class="nc" id="L75">		Gamemaker gm = new Gamemaker(gamePanel); // The left side panel for making the game.</span>
+<span class="nc" id="L76">		contentPane.add(gm);</span>
+<span class="nc" id="L77">		gm.revalidate();</span>
+<span class="nc" id="L78">		gm.buildToolPanel();</span>
+		
+		
+		
+	
+<span class="nc" id="L83">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

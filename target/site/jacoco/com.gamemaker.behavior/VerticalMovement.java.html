@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VerticalMovement.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.behavior</a> &gt; <span class="el_source">VerticalMovement.java</span></div><h1>VerticalMovement.java</h1><pre class="source lang-java linenums">package com.gamemaker.behavior;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import com.gamemaker.model.Component;
+
+public class VerticalMovement implements Movement, KeyListener{
+
+	private static final long serialVersionUID = 1L;
+	private int speedY;
+	private int upMovement;
+	private int downMovement;
+	private int updateSpeed;
+	private String control;
+
+
+	public VerticalMovement(int speedY,String control)
+<span class="fc" id="L19">	{</span>
+<span class="fc" id="L20">		this.control=control;</span>
+<span class="fc" id="L21">		this.speedY=speedY;</span>
+<span class="fc" id="L22">		this.updateSpeed=speedY;</span>
+
+<span class="fc bfc" id="L24" title="All 2 branches covered.">		if(control.equals(&quot;arrows&quot;))</span>
+		{
+<span class="fc" id="L26">			this.upMovement=KeyEvent.VK_UP;</span>
+<span class="fc" id="L27">			this.downMovement=KeyEvent.VK_DOWN;</span>
+		}
+<span class="fc bfc" id="L29" title="All 2 branches covered.">		if(control.equals(&quot;keys&quot;))</span>
+		{
+<span class="fc" id="L31">			this.upMovement=KeyEvent.VK_W;</span>
+<span class="fc" id="L32">			this.downMovement=KeyEvent.VK_S;</span>
+		}
+<span class="fc" id="L34">	}</span>
+
+	public String getControl() {
+<span class="fc" id="L37">		return control;</span>
+	}
+
+	public void setControl(String control) {
+<span class="nc" id="L41">		this.control = control;</span>
+<span class="nc" id="L42">	}</span>
+
+	public int getSpeedY() {
+<span class="fc" id="L45">		return speedY;</span>
+	}
+
+	public void setSpeedY(int speedY) {
+<span class="fc" id="L49">		this.speedY = speedY;</span>
+<span class="fc" id="L50">	}</span>
+
+	public boolean isUp() {
+<span class="fc" id="L53">		return isUp;</span>
+	}
+
+	public void setUp(boolean isUp) {
+<span class="nc" id="L57">		this.isUp = isUp;</span>
+<span class="nc" id="L58">	}</span>
+
+	public boolean isDown() {
+<span class="fc" id="L61">		return isDown;</span>
+	}
+
+	public void setDown(boolean isDown) {
+<span class="nc" id="L65">		this.isDown = isDown;</span>
+<span class="nc" id="L66">	}</span>
+	
+	public int getUpMovement() {
+<span class="nc" id="L69">		return upMovement;</span>
+	}
+
+	public int getDownMovement() {
+<span class="nc" id="L73">		return downMovement;</span>
+	}
+
+	boolean isUp;
+	boolean isDown;
+
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+<span class="fc" id="L81">		keyEventHelper(arg0.getKeyCode(), true);</span>
+<span class="fc" id="L82">	}</span>
+
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+<span class="fc" id="L86">		keyEventHelper(arg0.getKeyCode(), false);</span>
+<span class="fc" id="L87">	}</span>
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// Not used
+<span class="nc" id="L92">	}</span>
+
+	@Override
+	public void move(Component component) {
+<span class="nc bnc" id="L96" title="All 2 branches missed.">		if (isUp) {</span>
+<span class="nc" id="L97">			component.setPositionY(component.getPositionY() - speedY);</span>
+<span class="nc" id="L98">			speedY = 0;</span>
+		}
+<span class="nc bnc" id="L100" title="All 2 branches missed.">		if (isDown) {</span>
+<span class="nc" id="L101">			component.setPositionY(component.getPositionY() + speedY);</span>
+<span class="nc" id="L102">			speedY = 0;</span>
+		}
+<span class="nc" id="L104">	}</span>
+
+	@Override
+	public int getSpeedX() {
+<span class="nc" id="L108">		return 0;</span>
+	}
+	
+	private void keyEventHelper(int keyCode, boolean flag) {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">		if (keyCode == upMovement) {</span>
+<span class="fc" id="L113">			this.isUp = flag;</span>
+		}
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if (keyCode == downMovement) {</span>
+<span class="fc" id="L116">			this.isDown = flag;</span>
+		}
+<span class="fc" id="L118">		speedY = updateSpeed;</span>
+<span class="fc" id="L119">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

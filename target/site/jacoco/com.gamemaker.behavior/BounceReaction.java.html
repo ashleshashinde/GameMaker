@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BounceReaction.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.behavior</a> &gt; <span class="el_source">BounceReaction.java</span></div><h1>BounceReaction.java</h1><pre class="source lang-java linenums">package com.gamemaker.behavior;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.Map.Entry;
+
+import javax.swing.JPanel;
+
+import com.gamemaker.model.Component;
+import com.gamemaker.model.ComponentGroup;
+
+<span class="fc" id="L14">public class BounceReaction implements Reaction, KeyListener {</span>
+	
+	private static final long serialVersionUID = 1L;
+	private boolean moveLeft;
+	private boolean moveRight;
+	private boolean moveUp;
+	private boolean moveDown;
+	private int leftMovement;
+	private int rightMovement;
+	private int upMovement;
+	private int downMovement;
+	
+	@Override
+	public void react(Component activeComponent, ComponentGroup group) throws InterruptedException {
+
+<span class="nc" id="L29">		Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = group.getComponentMap().entrySet().iterator();</span>
+<span class="nc" id="L30">		PlaySound playSound = new PlaySound(&quot;bounce.wav&quot;);</span>
+	
+<span class="nc bnc" id="L32" title="All 2 branches missed.">		while(componentIterator.hasNext()) {</span>
+<span class="nc" id="L33">			Component passiveComponent = componentIterator.next().getValue();</span>
+			
+			// Checking if try to apply this reaction for same component in the iterator
+<span class="nc bnc" id="L36" title="All 2 branches missed.">			if (activeComponent == passiveComponent)</span>
+<span class="nc" id="L37">				continue; // skip the component itself</span>
+
+<span class="nc" id="L39">			Rectangle2D activeBounds = activeComponent.getShape().getBounds2D();</span>
+<span class="nc" id="L40">			Rectangle2D passiveBounds = passiveComponent.getShape().getBounds2D();</span>
+<span class="nc" id="L41">			Rectangle2D insect = passiveBounds.createIntersection(activeBounds);</span>
+			
+<span class="nc" id="L43">			Double activeX = activeBounds.getX();</span>
+<span class="nc" id="L44">			Double activeY = activeBounds.getY();</span>
+<span class="nc" id="L45">			Double activeMaxX = activeBounds.getMaxX();</span>
+<span class="nc" id="L46">			Double activeMaxY = activeBounds.getMaxY();</span>
+<span class="nc" id="L47">			Double activeWidth = activeBounds.getWidth();</span>
+<span class="nc" id="L48">			Double activeHeight = activeBounds.getHeight();</span>
+			
+<span class="nc" id="L50">			Double passiveX = passiveBounds.getX();</span>
+<span class="nc" id="L51">			Double passiveY = passiveBounds.getY();</span>
+<span class="nc" id="L52">			Double passiveMaxX = passiveBounds.getMaxX();</span>
+<span class="nc" id="L53">			Double passiveMaxY = passiveBounds.getMaxY();</span>
+			
+<span class="nc bnc" id="L55" title="All 2 branches missed.">			if (activeBounds.intersects(passiveBounds)){ </span>
+				// Play sound effect
+				
+<span class="nc" id="L58">				playSound.play();</span>
+				//setting the status to dead to check winning condition for bounce
+<span class="nc" id="L60">				activeComponent.setStatus(&quot;bounced&quot;);</span>
+
+				/* Source for below piece of code: 
+				 https://stackoverflow.com/questions/13261767/java-ball-object-doesnt-bounce-off-of-drawn-rectangles-like-its-supposed-to
+				*/
+				// Flags...
+<span class="nc" id="L66">				boolean vertical = false;</span>
+<span class="nc" id="L67">				boolean horizontal = false;</span>
+<span class="nc" id="L68">				boolean isLeft = false;</span>
+<span class="nc" id="L69">				boolean isTop = false;</span>
+				// Left side...
+<span class="nc bnc" id="L71" title="All 2 branches missed.">				if (insect.getX() == passiveX) {</span>
+<span class="nc" id="L72">					horizontal = true;</span>
+<span class="nc" id="L73">					isLeft = true;</span>
+					// Right side
+<span class="nc bnc" id="L75" title="All 2 branches missed.">				} else if (insect.getX() + insect.getWidth() == passiveX + passiveBounds.getWidth()) {</span>
+<span class="nc" id="L76">					horizontal = true;</span>
+				}
+				// Top
+<span class="nc bnc" id="L79" title="All 2 branches missed.">				if (insect.getY() == passiveY) {</span>
+<span class="nc" id="L80">					vertical = true;</span>
+<span class="nc" id="L81">					isTop = true;</span>
+					// Bottom
+<span class="nc bnc" id="L83" title="All 2 branches missed.">				} else if (insect.getY() + insect.getHeight() == passiveY + passiveBounds.getHeight()) {</span>
+<span class="nc" id="L84">					vertical = true;</span>
+				}
+
+				// Technically, we can really only collide with a single edge...more or less
+<span class="nc bnc" id="L88" title="All 4 branches missed.">				if (horizontal &amp;&amp; vertical) {</span>
+					// Basically, we try and give precedence to the longer edge...
+<span class="nc bnc" id="L90" title="All 2 branches missed.">					if (insect.getWidth() &gt; insect.getHeight()) {</span>
+<span class="nc" id="L91">						horizontal = false;</span>
+					} else {
+<span class="nc" id="L93">						vertical = false;</span>
+					}
+				}
+				
+<span class="nc" id="L97">				Movement move = activeComponent.getMovement();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">				if (move instanceof AutomaticMovement) {</span>
+<span class="nc" id="L99">					AutomaticMovement autoMove = (AutomaticMovement)activeComponent.getMovement();</span>
+					// We collided with a horizontal side...
+<span class="nc bnc" id="L101" title="All 2 branches missed.">					if (horizontal) {</span>
+<span class="nc" id="L102">						autoMove.setSpeedX(-autoMove.getSpeedX());</span>
+						// Move the ball to the appropriate edge so we don't get caught...
+<span class="nc bnc" id="L104" title="All 2 branches missed.">						if (isLeft) {</span>
+<span class="nc" id="L105">							activeComponent.setPositionX(passiveX - activeBounds.getWidth());</span>
+						} else {
+<span class="nc" id="L107">							activeComponent.setPositionX(passiveX + passiveBounds.getWidth());</span>
+						}
+						// We collided with a vertical side...
+<span class="nc bnc" id="L110" title="All 2 branches missed.">					} else if (vertical) {</span>
+<span class="nc" id="L111">						autoMove.setSpeedY(-autoMove.getSpeedY());</span>
+						// Move the ball to the appropriate edge so we don't get caught...
+<span class="nc bnc" id="L113" title="All 2 branches missed.">						if (isTop) {</span>
+<span class="nc" id="L114">							activeComponent.setPositionY(passiveY - activeBounds.getHeight());</span>
+						} else {
+<span class="nc" id="L116">							activeComponent.setPositionY(passiveY + passiveBounds.getHeight());</span>
+						}
+					}
+<span class="nc bnc" id="L119" title="All 2 branches missed.">				} else if (move instanceof HorizontalMovement) {</span>
+<span class="nc" id="L120">					HorizontalMovement horiMove = (HorizontalMovement) activeComponent.getMovement();</span>
+<span class="nc" id="L121">					leftMovement = horiMove.getLeftMovement();</span>
+<span class="nc" id="L122">					rightMovement = horiMove.getRightMovement();</span>
+					
+<span class="nc bnc" id="L124" title="All 4 branches missed.">					if (activeX + horiMove.getSpeedX() &lt;= passiveMaxX &amp;&amp; moveLeft) {</span>
+						// Stop the object at the rightBoundary of the passive component
+<span class="nc" id="L126">						activeComponent.setPositionX(passiveMaxX);</span>
+					}
+<span class="nc bnc" id="L128" title="All 4 branches missed.">					if (activeMaxX + horiMove.getSpeedX() &gt;= passiveX &amp;&amp; moveRight) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L130">						activeComponent.setPositionX(passiveX - activeWidth);</span>
+					}
+<span class="nc bnc" id="L132" title="All 2 branches missed.">				} else if (move instanceof VerticalMovement) {</span>
+<span class="nc" id="L133">					VerticalMovement verMove = (VerticalMovement) activeComponent.getMovement();</span>
+<span class="nc" id="L134">					upMovement = verMove.getUpMovement();</span>
+<span class="nc" id="L135">					downMovement = verMove.getDownMovement();</span>
+<span class="nc bnc" id="L136" title="All 4 branches missed.">					if (activeY + verMove.getSpeedY() &lt;= passiveMaxY &amp;&amp; moveUp) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L138">						activeComponent.setPositionY(passiveMaxY);</span>
+					}
+<span class="nc bnc" id="L140" title="All 4 branches missed.">					if (activeMaxY + verMove.getSpeedY() &gt;= passiveY &amp;&amp; moveDown) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L142">						activeComponent.setPositionY(passiveY - activeHeight);</span>
+					}
+				}
+			}
+<span class="nc" id="L146">		}</span>
+<span class="nc" id="L147">	}</span>
+	
+	
+
+	@Override
+	public void reactNew(Component activeComponent, Component passiveComponent, JPanel panel) throws InterruptedException {
+
+		//Iterator&lt;Entry&lt;String, Component&gt;&gt; componentIterator = group.getComponentMap().entrySet().iterator();
+<span class="nc" id="L155">		PlaySound playSound = new PlaySound(&quot;bounce.wav&quot;);</span>
+	
+		//while(componentIterator.hasNext()) {
+			//Component passiveComponent = componentIterator.next().getValue();
+			
+			// Checking if try to apply this reaction for same component in the iterator
+			//if (activeComponent == passiveComponent)
+			//	continue; // skip the component itself
+		
+
+<span class="nc" id="L165">			Rectangle2D activeBounds = activeComponent.getShape().getBounds2D();</span>
+<span class="nc" id="L166">			Rectangle2D passiveBounds = passiveComponent.getShape().getBounds2D();</span>
+<span class="nc" id="L167">			Rectangle2D insect = passiveBounds.createIntersection(activeBounds);</span>
+			
+			
+<span class="nc" id="L170">			Double activeX = activeBounds.getX();</span>
+<span class="nc" id="L171">			Double activeY = activeBounds.getY();</span>
+<span class="nc" id="L172">			Double activeMaxX = activeBounds.getMaxX();</span>
+<span class="nc" id="L173">			Double activeMaxY = activeBounds.getMaxY();</span>
+<span class="nc" id="L174">			Double activeWidth = activeBounds.getWidth();</span>
+<span class="nc" id="L175">			Double activeHeight = activeBounds.getHeight();</span>
+			
+<span class="nc" id="L177">			Double passiveX = passiveBounds.getX();</span>
+<span class="nc" id="L178">			Double passiveY = passiveBounds.getY();</span>
+<span class="nc" id="L179">			Double passiveMaxX = passiveBounds.getMaxX();</span>
+<span class="nc" id="L180">			Double passiveMaxY = passiveBounds.getMaxY();</span>
+			
+<span class="nc bnc" id="L182" title="All 2 branches missed.">			if (activeBounds.intersects(passiveBounds)){ </span>
+				// Play sound effect
+				//System.out.println(&quot;bounce&quot;);
+<span class="nc" id="L185">				playSound.play();</span>
+				//setting the status to dead to check winning condition for bounce
+<span class="nc" id="L187">				activeComponent.setStatus(&quot;bounced&quot;);</span>
+
+				/* Source for below piece of code: 
+				 https://stackoverflow.com/questions/13261767/java-ball-object-doesnt-bounce-off-of-drawn-rectangles-like-its-supposed-to
+				*/
+				// Flags...
+<span class="nc" id="L193">				boolean vertical = false;</span>
+<span class="nc" id="L194">				boolean horizontal = false;</span>
+<span class="nc" id="L195">				boolean isLeft = false;</span>
+<span class="nc" id="L196">				boolean isTop = false;</span>
+				// Left side...
+<span class="nc bnc" id="L198" title="All 2 branches missed.">				if (insect.getX() == passiveX) {</span>
+<span class="nc" id="L199">					horizontal = true;</span>
+<span class="nc" id="L200">					isLeft = true;</span>
+					// Right side
+<span class="nc bnc" id="L202" title="All 2 branches missed.">				} else if (insect.getX() + insect.getWidth() == passiveX + passiveBounds.getWidth()) {</span>
+<span class="nc" id="L203">					horizontal = true;</span>
+				}
+				// Top
+<span class="nc bnc" id="L206" title="All 2 branches missed.">				if (insect.getY() == passiveY) {</span>
+<span class="nc" id="L207">					vertical = true;</span>
+<span class="nc" id="L208">					isTop = true;</span>
+					// Bottom
+<span class="nc bnc" id="L210" title="All 2 branches missed.">				} else if (insect.getY() + insect.getHeight() == passiveY + passiveBounds.getHeight()) {</span>
+<span class="nc" id="L211">					vertical = true;</span>
+				}
+
+				// Technically, we can really only collide with a single edge...more or less
+<span class="nc bnc" id="L215" title="All 4 branches missed.">				if (horizontal &amp;&amp; vertical) {</span>
+					// Basically, we try and give precedence to the longer edge...
+<span class="nc bnc" id="L217" title="All 2 branches missed.">					if (insect.getWidth() &gt; insect.getHeight()) {</span>
+<span class="nc" id="L218">						horizontal = false;</span>
+					} else {
+<span class="nc" id="L220">						vertical = false;</span>
+					}
+				}
+				
+<span class="nc" id="L224">				Movement move = activeComponent.getMovement();</span>
+<span class="nc bnc" id="L225" title="All 2 branches missed.">				if (move instanceof AutomaticMovement) {</span>
+<span class="nc" id="L226">					AutomaticMovement autoMove = (AutomaticMovement)activeComponent.getMovement();</span>
+					// We collided with a horizontal side...
+<span class="nc bnc" id="L228" title="All 2 branches missed.">					if (horizontal) {</span>
+<span class="nc" id="L229">						autoMove.setSpeedX(-autoMove.getSpeedX());</span>
+						// Move the ball to the appropriate edge so we don't get caught...
+<span class="nc bnc" id="L231" title="All 2 branches missed.">						if (isLeft) {</span>
+<span class="nc" id="L232">							activeComponent.setPositionX(passiveX - activeBounds.getWidth());</span>
+						} else {
+<span class="nc" id="L234">							activeComponent.setPositionX(passiveX + passiveBounds.getWidth());</span>
+						}
+						// We collided with a vertical side...
+<span class="nc bnc" id="L237" title="All 2 branches missed.">					} else if (vertical) {</span>
+<span class="nc" id="L238">						autoMove.setSpeedY(-autoMove.getSpeedY());</span>
+						// Move the ball to the appropriate edge so we don't get caught...
+<span class="nc bnc" id="L240" title="All 2 branches missed.">						if (isTop) {</span>
+<span class="nc" id="L241">							activeComponent.setPositionY(passiveY - activeBounds.getHeight());</span>
+						} else {
+<span class="nc" id="L243">							activeComponent.setPositionY(passiveY + passiveBounds.getHeight());</span>
+						}
+					}
+<span class="nc bnc" id="L246" title="All 2 branches missed.">				} else if (move instanceof HorizontalMovement) {</span>
+<span class="nc" id="L247">					HorizontalMovement horiMove = (HorizontalMovement) activeComponent.getMovement();</span>
+<span class="nc" id="L248">					leftMovement = horiMove.getLeftMovement();</span>
+<span class="nc" id="L249">					rightMovement = horiMove.getRightMovement();</span>
+					
+<span class="nc bnc" id="L251" title="All 4 branches missed.">					if (activeX + horiMove.getSpeedX() &lt;= passiveMaxX &amp;&amp; moveLeft) {</span>
+						// Stop the object at the rightBoundary of the passive component
+<span class="nc" id="L253">						activeComponent.setPositionX(passiveMaxX);</span>
+					}
+<span class="nc bnc" id="L255" title="All 4 branches missed.">					if (activeMaxX + horiMove.getSpeedX() &gt;= passiveX &amp;&amp; moveRight) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L257">						activeComponent.setPositionX(passiveX - activeWidth);</span>
+					}
+<span class="nc bnc" id="L259" title="All 2 branches missed.">				} else if (move instanceof VerticalMovement) {</span>
+<span class="nc" id="L260">					VerticalMovement verMove = (VerticalMovement) activeComponent.getMovement();</span>
+<span class="nc" id="L261">					upMovement = verMove.getUpMovement();</span>
+<span class="nc" id="L262">					downMovement = verMove.getDownMovement();</span>
+<span class="nc bnc" id="L263" title="All 4 branches missed.">					if (activeY + verMove.getSpeedY() &lt;= passiveMaxY &amp;&amp; moveUp) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L265">						activeComponent.setPositionY(passiveMaxY);</span>
+					}
+<span class="nc bnc" id="L267" title="All 4 branches missed.">					if (activeMaxY + verMove.getSpeedY() &gt;= passiveY &amp;&amp; moveDown) {</span>
+						// Stop the object instead of bouncing it back
+<span class="nc" id="L269">						activeComponent.setPositionY(passiveY - activeHeight);</span>
+					}
+<span class="nc" id="L271">				}</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">				else if(move instanceof HorizontalVerticalKeyMovements) {</span>
+					
+<span class="nc" id="L274">					HorizontalVerticalKeyMovements horiVerMove = (HorizontalVerticalKeyMovements) activeComponent.getMovement();</span>
+<span class="nc" id="L275">					upMovement = horiVerMove.getUpMovement();</span>
+<span class="nc" id="L276">					downMovement = horiVerMove.getDownMovement();</span>
+<span class="nc" id="L277">					leftMovement = horiVerMove.getLeftMovement();</span>
+<span class="nc" id="L278">					rightMovement = horiVerMove.getRightMovement();</span>
+					
+					//System.out.println(&quot;activeX &quot;+activeX);
+					//System.out.println(&quot;downMovement &quot;+downMovement);
+					//System.out.println(&quot;activeX &quot;+activeX);
+					//System.out.println(&quot;passiveY &quot;+passiveY);
+					
+<span class="nc bnc" id="L285" title="All 4 branches missed.">					if (activeX + horiVerMove.getSpeedX() &lt;= passiveMaxX &amp;&amp; moveLeft) {</span>
+						//System.out.println(&quot;left&quot;);
+						// Stop the object at the rightBoundary of the passive component
+<span class="nc" id="L288">						activeComponent.setPositionX(passiveMaxX);</span>
+					}
+<span class="nc bnc" id="L290" title="All 4 branches missed.">					if (activeMaxX + horiVerMove.getSpeedX() &gt;= passiveX &amp;&amp; moveRight) {</span>
+						// Stop the object instead of bouncing it back
+						//System.out.println(&quot;right&quot;);
+<span class="nc" id="L293">						activeComponent.setPositionX(passiveX - activeWidth);</span>
+					}
+<span class="nc bnc" id="L295" title="All 4 branches missed.">					if (activeY + horiVerMove.getSpeedY() &lt;= passiveMaxY &amp;&amp; moveUp) {</span>
+						// Stop the object instead of bouncing it back
+						//System.out.println(&quot;up&quot;);
+<span class="nc" id="L298">						activeComponent.setPositionY(passiveMaxY);</span>
+					}
+<span class="nc bnc" id="L300" title="All 4 branches missed.">					if (activeMaxY + horiVerMove.getSpeedY() &gt;= passiveY &amp;&amp; moveDown) {</span>
+						// Stop the object instead of bouncing it back
+						//System.out.println(&quot;down&quot;);
+<span class="nc" id="L303">						activeComponent.setPositionY(passiveY - activeHeight);</span>
+					}
+				}
+			}
+		//}
+<span class="nc" id="L308">	}</span>
+	
+	
+	@Override
+	public void keyPressed(KeyEvent arg0) {
+<span class="nc" id="L313">		keyEventHelper(arg0.getKeyCode(), true);</span>
+<span class="nc" id="L314">	}</span>
+
+	
+	
+	@Override
+	public void keyReleased(KeyEvent arg0) {
+<span class="nc" id="L320">		keyEventHelper(arg0.getKeyCode(), false);</span>
+<span class="nc" id="L321">	}</span>
+
+	@Override
+	public void keyTyped(KeyEvent arg0) {
+		// Not used
+		
+<span class="nc" id="L327">	}</span>
+	
+	private void keyEventHelper(int keyCode, boolean flag) {
+		//System.out.println(&quot;downMovement key &quot;+keyCode);
+<span class="nc bnc" id="L331" title="All 2 branches missed.">		if (keyCode == leftMovement) {</span>
+<span class="nc" id="L332">			this.moveLeft = flag;</span>
+		}
+<span class="nc bnc" id="L334" title="All 2 branches missed.">		if (keyCode == rightMovement) {</span>
+<span class="nc" id="L335">			this.moveRight = flag;</span>
+		}
+<span class="nc bnc" id="L337" title="All 2 branches missed.">		if (keyCode == upMovement) {</span>
+<span class="nc" id="L338">			this.moveUp = flag;</span>
+		}
+<span class="nc bnc" id="L340" title="All 2 branches missed.">		if (keyCode == downMovement) {</span>
+<span class="nc" id="L341">			this.moveDown = flag;</span>
+		}
+<span class="nc" id="L343">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

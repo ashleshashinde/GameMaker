@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameDataOperations.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.statepersistence</a> &gt; <span class="el_source">GameDataOperations.java</span></div><h1>GameDataOperations.java</h1><pre class="source lang-java linenums">package com.gamemaker.statepersistence;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Date;
+
+import javax.imageio.ImageIO;
+
+import org.apache.log4j.Logger;
+
+import com.gamemaker.model.ComponentGroup;
+
+// To read and write to file.
+<span class="fc" id="L19">public class GameDataOperations {</span>
+	
+<span class="fc" id="L21">	private static final Logger logger = Logger.getLogger(GameDataOperations.class);</span>
+	
+	public void saveToFile(ComponentGroup component) {
+
+<span class="fc" id="L25">		FileOutputStream fout = null;</span>
+<span class="fc" id="L26">		ObjectOutputStream oos = null;</span>
+		
+<span class="fc" id="L28">		GameData gameData = new GameData(component.getComponentMap(), component.getWinMap(), component.getLoseMap(), component.getColor(), component.getFile());</span>
+<span class="fc" id="L29">		Date date = new Date();</span>
+<span class="fc" id="L30">		long time = date.getTime();</span>
+<span class="fc" id="L31">		String file = getStoragePath()+time+&quot;.sav&quot;;</span>
+		try {
+<span class="fc" id="L33">			fout = new FileOutputStream(file);</span>
+<span class="fc" id="L34">			oos = new ObjectOutputStream(fout);</span>
+<span class="fc" id="L35">			oos.writeObject(gameData);</span>
+<span class="nc" id="L36">		} catch (Exception ex) {</span>
+<span class="nc" id="L37">			logger.debug(ex.getMessage());</span>
+		} finally {
+<span class="pc bpc" id="L39" title="1 of 2 branches missed.">			if (fout != null) {</span>
+				try {
+<span class="fc" id="L41">					fout.close();</span>
+<span class="nc" id="L42">				} catch (IOException ex) {</span>
+<span class="nc" id="L43">					logger.debug(ex.getMessage());</span>
+<span class="fc" id="L44">				}</span>
+			}
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">			if (oos != null) {</span>
+				try {
+<span class="fc" id="L48">					oos.close();</span>
+<span class="nc" id="L49">				} catch (IOException ex) {</span>
+<span class="nc" id="L50">					logger.debug(ex.getMessage());</span>
+<span class="fc" id="L51">				}</span>
+			}
+		}
+		
+<span class="fc" id="L55">	}</span>
+
+	public ComponentGroup readObjectFromFile(File file) {
+<span class="nc" id="L58">		InputStream fileIn = null;</span>
+<span class="nc" id="L59">		ObjectInputStream objectIn = null;</span>
+		
+		try {
+
+<span class="nc" id="L63">			fileIn = new FileInputStream(file);</span>
+<span class="nc" id="L64">			objectIn = new ObjectInputStream(fileIn);</span>
+<span class="nc" id="L65">			GameData gameData = (GameData)objectIn.readObject();</span>
+<span class="nc" id="L66">			ComponentGroup componentGroup = new ComponentGroup();</span>
+<span class="nc" id="L67">			componentGroup.setComponentMap(gameData.getComponentMap());</span>
+<span class="nc" id="L68">			componentGroup.setWinMap(gameData.getWinMap());</span>
+<span class="nc" id="L69">			componentGroup.setLoseMap(gameData.getLoseMap());</span>
+<span class="nc" id="L70">			componentGroup.setColor(gameData.getBackgroundColor());</span>
+<span class="nc" id="L71">			componentGroup.setFile(gameData.getFile());</span>
+			//componentGroup.setBackGroundImage(ImageIO.read(gameData.getFile()));
+			
+<span class="nc" id="L74">			objectIn.close();</span>
+<span class="nc" id="L75">			fileIn.close();</span>
+			
+<span class="nc" id="L77">			return componentGroup;</span>
+
+<span class="nc" id="L79">		} catch (Exception ex) {</span>
+<span class="nc" id="L80">			logger.debug(ex.getMessage());</span>
+<span class="nc" id="L81">			return null;</span>
+		}finally {
+<span class="nc bnc" id="L83" title="All 2 branches missed.">			if(fileIn != null) {</span>
+				try {
+<span class="nc" id="L85">					fileIn.close();</span>
+<span class="nc" id="L86">				}catch (IOException ex) {</span>
+<span class="nc" id="L87">					logger.debug(ex.getMessage());</span>
+<span class="nc" id="L88">				}</span>
+			}
+<span class="nc bnc" id="L90" title="All 2 branches missed.">			if(objectIn != null) {</span>
+				try {
+<span class="nc" id="L92">					objectIn.close();</span>
+<span class="nc" id="L93">				} catch (IOException ex) {</span>
+<span class="nc" id="L94">					logger.debug(ex.getMessage());</span>
+<span class="nc" id="L95">				}</span>
+			}
+		}
+	}
+	
+	public String getStoragePath() {
+<span class="fc" id="L101">		return System.getProperty(&quot;user.dir&quot;) + File.separator + &quot;GameData&quot; + File.separator;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

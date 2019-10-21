@@ -1,0 +1,6 @@
+projectKey=gdx~hKD}iF{%yod
+serverUrl=http://snowy.sice.indiana.edu:9000
+serverVersion=7.8.0.26217
+dashboardUrl=http://snowy.sice.indiana.edu:9000/dashboard?id=gdx%7EhKD%7DiF%7B%25yod
+ceTaskId=AW3sOBUXgbXbPz12bSsA
+ceTaskUrl=http://snowy.sice.indiana.edu:9000/api/ce/task?id=AW3sOBUXgbXbPz12bSsA

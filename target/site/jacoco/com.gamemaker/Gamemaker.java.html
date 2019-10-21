@@ -1,0 +1,794 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Gamemaker.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker</a> &gt; <span class="el_source">Gamemaker.java</span></div><h1>Gamemaker.java</h1><pre class="source lang-java linenums">/*
+ * Changes : 
+ * Asim : Added &quot;Frogger&quot; in shapes Array. And aaddButton action listener switch case. 
+ */
+package com.gamemaker;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JTextField;
+import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JColorChooser;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.border.TitledBorder;
+
+import org.apache.log4j.Logger;
+
+import com.gamemaker.behavior.Action;
+import com.gamemaker.behavior.AutomaticMovement;
+import com.gamemaker.behavior.BounceBoundaryInteraction;
+import com.gamemaker.behavior.BounceReaction;
+import com.gamemaker.behavior.BoundaryInteraction;
+import com.gamemaker.behavior.ComeThroughBoundaryInteraction;
+import com.gamemaker.behavior.ExplodeReaction;
+import com.gamemaker.behavior.HorizontalMovement;
+import com.gamemaker.behavior.HorizontalVerticalKeyMovements;
+import com.gamemaker.behavior.LeaveForeverBoundaryInteraction;
+import com.gamemaker.behavior.MoveDownBoundaryInteraction;
+import com.gamemaker.behavior.NoAction;
+import com.gamemaker.behavior.NoBoundaryInteraction;
+import com.gamemaker.behavior.NoMovement;
+import com.gamemaker.behavior.NoReaction;
+import com.gamemaker.behavior.Reaction;
+import com.gamemaker.behavior.Shoot;
+import com.gamemaker.behavior.StickReaction;
+import com.gamemaker.behavior.VerticalMovement;
+
+import com.gamemaker.model.Circle;
+import com.gamemaker.model.Component;
+import com.gamemaker.model.ComponentGroup;
+import com.gamemaker.model.ImageSprite;
+import com.gamemaker.model.Rectangle;
+import com.gamemaker.model.ShapesModel;
+import com.gamemaker.model.Triangle;
+import com.gamemaker.statepersistence.GameData;
+import com.gamemaker.statepersistence.GameDataOperations;
+
+import javax.swing.UIManager;
+
+public class Gamemaker extends JPanel {
+
+	private JPanel contentPane;
+	private JTabbedPane gameTabs;
+	private JPanel toolPanel;
+	private JPanel behaviourPanel;
+	private JPanel designPanel;
+	private JTextField objName;
+	private JTextField yPosition;
+	private JTextField widthTextField;
+	private JTextField xPosition;
+	private JTextField heightTextField;
+	private JTextField speedX;
+	private JTextField speedY;
+	private JComboBox movementBox;
+	private JComboBox eventBox;
+	private JComboBox eventWithBox;
+	private JComboBox shapeBox;
+	private JComboBox windowBox;
+	private JComboBox actionBox;
+	private JComboBox gameOptionBox;
+	private JLabel movementLabel;
+	private JLabel eventLabel;
+	private JLabel shapeLabel;
+	private JLabel colorLabel;
+	private JLabel nameLabel;
+	private JLabel positionLabel;
+	private JLabel windowLabel;
+	private JLabel heightLabel;
+	private JLabel widthLabel;
+	private JLabel bgColorLabel;
+	private JLabel dimensionLabel;
+	private JLabel speedXLabel;
+	private JLabel speedYLabel;
+	private JLabel winLabel;
+	private JRadioButton rdbtnWin;
+	private JRadioButton rdbtnLose;
+	private ButtonGroup gameflag;
+	private JButton addButton;
+	private JButton playButton;
+	private JButton saveButton;
+	private JButton loadButton;
+	private JButton colorButton;
+	private JButton bgColorButton;
+	private JButton clearButton;
+	private GamePanel gamePanel;
+	private Component component;
+	private ComponentGroup group;
+	private Reaction reaction;
+	private BoundaryInteraction boundaryInteraction;
+	private Color color;
+	private Color bgColor;
+	private JButton addReaction;
+<span class="nc" id="L125">	private HashMap&lt;Component,Reaction &gt; reactMap = new HashMap&lt;&gt;();	</span>
+	DefaultComboBoxModel eventsWithModel ;
+	private JButton addBackGround;
+	private JButton addShape;
+	BufferedImage image;
+	JFileChooser fileChooser;
+	private File file ;
+	boolean isTileDynamic;
+	String tileName;
+	private File tileFile;
+	
+<span class="fc" id="L136">	private static final Logger logger = Logger.getLogger(GamePanel.class);</span>
+
+<span class="nc" id="L138">	public Gamemaker(GamePanel gp) {</span>
+<span class="nc" id="L139">		group = new ComponentGroup();</span>
+<span class="nc" id="L140">		setBounds(0, 0, 320, 710);</span>
+<span class="nc" id="L141">		this.setLayout(null);</span>
+<span class="nc" id="L142">		contentPane = new JPanel();</span>
+<span class="nc" id="L143">		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));</span>
+
+<span class="nc" id="L145">		contentPane.setLayout(null);</span>
+<span class="nc" id="L146">		gamePanel = gp;</span>
+<span class="nc" id="L147">		gameTabs = new JTabbedPane(JTabbedPane.TOP);</span>
+<span class="nc" id="L148">		gameTabs.setBounds(0, 0, 325, 670);</span>
+<span class="nc" id="L149">		this.add(gameTabs);</span>
+<span class="nc" id="L150">		gameTabs.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);</span>
+
+<span class="nc" id="L152">		toolPanel = new JPanel();</span>
+<span class="nc" id="L153">		gameTabs.addTab(&quot;Design&quot;, null, toolPanel, null);</span>
+<span class="nc" id="L154">		toolPanel.setLayout(null);</span>
+<span class="nc" id="L155">		toolPanel.setBounds(0, 0, 315, 670);</span>
+
+<span class="nc" id="L157">		movementBox = new JComboBox();</span>
+<span class="nc" id="L158">		movementBox.setBounds(20, 375, 113, 22);</span>
+<span class="nc" id="L159">		toolPanel.add(movementBox);</span>
+
+<span class="nc" id="L161">		speedXLabel = new JLabel(&quot;SpeedX&quot;);</span>
+<span class="nc" id="L162">		speedXLabel.setBounds(20, 390, 50, 50);</span>
+<span class="nc" id="L163">		toolPanel.add(speedXLabel);</span>
+
+<span class="nc" id="L165">		speedX = new JTextField(&quot;0&quot;);</span>
+<span class="nc" id="L166">		speedX.setBounds(75, 405, 43, 20);</span>
+<span class="nc" id="L167">		toolPanel.add(speedX);</span>
+
+<span class="nc" id="L169">		speedYLabel = new JLabel(&quot;SpeedY&quot;);</span>
+<span class="nc" id="L170">		speedYLabel.setBounds(125, 390, 50, 50);</span>
+<span class="nc" id="L171">		toolPanel.add(speedYLabel);</span>
+
+<span class="nc" id="L173">		speedY = new JTextField(&quot;0&quot;);</span>
+<span class="nc" id="L174">		speedY.setBounds(175, 405, 43, 20);</span>
+<span class="nc" id="L175">		speedY.setColumns(10);</span>
+<span class="nc" id="L176">		toolPanel.add(speedY);</span>
+
+<span class="nc" id="L178">		JLabel actionLabel = new JLabel(&quot;Action&quot;);</span>
+<span class="nc" id="L179">		actionLabel.setBounds(20, 436, 56, 16);</span>
+<span class="nc" id="L180">		toolPanel.add(actionLabel);</span>
+
+<span class="nc" id="L182">		actionBox = new JComboBox();</span>
+<span class="nc" id="L183">		actionBox.setBounds(20, 454, 113, 25);</span>
+<span class="nc" id="L184">		toolPanel.add(actionBox);</span>
+
+
+<span class="nc" id="L187">		eventBox = new JComboBox();</span>
+<span class="nc" id="L188">		eventBox.setBounds(140, 454, 97, 25);</span>
+<span class="nc" id="L189">		toolPanel.add(eventBox);</span>
+
+
+
+<span class="nc" id="L193">		JLabel eventWithLabel = new JLabel(&quot;Event With&quot;);</span>
+<span class="nc" id="L194">		eventWithLabel.setBounds(145, 481, 96, 25);</span>
+<span class="nc" id="L195">		toolPanel.add(eventWithLabel);</span>
+
+<span class="nc" id="L197">		eventsWithModel = new DefaultComboBoxModel();</span>
+<span class="nc" id="L198">		eventWithBox = new JComboBox(eventsWithModel);</span>
+<span class="nc" id="L199">		eventWithBox.setBounds(140, 500, 97, 25);</span>
+<span class="nc" id="L200">		toolPanel.add(eventWithBox);</span>
+
+
+<span class="nc" id="L203">		addReaction = new JButton(&quot;Add Event&quot;);</span>
+<span class="nc" id="L204">		addReaction.setBounds(100, 530, 100, 30);</span>
+<span class="nc" id="L205">		toolPanel.add(addReaction);</span>
+
+<span class="nc" id="L207">		movementLabel = new JLabel(&quot;Movement&quot;);</span>
+<span class="nc" id="L208">		movementLabel.setBounds(20, 354, 56, 16);</span>
+<span class="nc" id="L209">		toolPanel.add(movementLabel);</span>
+
+<span class="nc" id="L211">		eventLabel = new JLabel(&quot;Event&quot;);</span>
+<span class="nc" id="L212">		eventLabel.setBounds(148, 436, 56, 16);</span>
+<span class="nc" id="L213">		toolPanel.add(eventLabel);</span>
+
+<span class="nc" id="L215">		winLabel = new JLabel(&quot;Win/Lose&quot;);</span>
+<span class="nc" id="L216">		winLabel.setBounds(20, 481, 97, 25);</span>
+<span class="nc" id="L217">		toolPanel.add(winLabel);</span>
+
+<span class="nc" id="L219">		gameOptionBox = new JComboBox();</span>
+<span class="nc" id="L220">		gameOptionBox.setBounds(20, 500, 113, 22);</span>
+<span class="nc" id="L221">		toolPanel.add(gameOptionBox);</span>
+
+<span class="nc" id="L223">		addButton = new JButton(&quot;Add&quot;);</span>
+<span class="nc" id="L224">		addButton.setBounds(50, 570, 67, 25);</span>
+<span class="nc" id="L225">		toolPanel.add(addButton);</span>
+
+<span class="nc" id="L227">		playButton = new JButton(&quot;Play&quot;);</span>
+<span class="nc" id="L228">		playButton.setBounds(200, 570, 67, 25);</span>
+<span class="nc" id="L229">		toolPanel.add(playButton);</span>
+
+<span class="nc" id="L231">		saveButton = new JButton(&quot;Save&quot;);</span>
+<span class="nc" id="L232">		saveButton.setBounds(75, 10, 77, 25);</span>
+<span class="nc" id="L233">		toolPanel.add(saveButton);</span>
+
+<span class="nc" id="L235">		loadButton = new JButton(&quot;Load&quot;);</span>
+<span class="nc" id="L236">		loadButton.setBounds(160, 10, 77, 25);</span>
+<span class="nc" id="L237">		toolPanel.add(loadButton);</span>
+
+<span class="nc" id="L239">		clearButton = new JButton(&quot;Clear&quot;);</span>
+<span class="nc" id="L240">		clearButton.setBounds(125, 570, 67, 25);</span>
+<span class="nc" id="L241">		toolPanel.add(clearButton);</span>
+
+<span class="nc" id="L243">		gameflag = new ButtonGroup();</span>
+<span class="nc" id="L244">		gameflag.add(rdbtnLose);</span>
+<span class="nc" id="L245">		gameflag.add(rdbtnWin);</span>
+
+<span class="nc" id="L247">		designPanel = new JPanel();</span>
+<span class="nc" id="L248">		designPanel.setBorder(new TitledBorder(UIManager.getBorder(&quot;TitledBorder.border&quot;), &quot;Design&quot;,</span>
+				TitledBorder.CENTER, TitledBorder.TOP, null, Color.BLACK));
+<span class="nc" id="L250">		designPanel.setBounds(6, 61, 298, 238);</span>
+<span class="nc" id="L251">		toolPanel.add(designPanel);</span>
+<span class="nc" id="L252">		designPanel.setLayout(null);</span>
+
+<span class="nc" id="L254">		bgColor = Color.WHITE;</span>
+
+<span class="nc" id="L256">		bgColorLabel = new JLabel(&quot;Background Color&quot;);</span>
+<span class="nc" id="L257">		bgColorLabel.setBounds(10,40,160,16);</span>
+<span class="nc" id="L258">		toolPanel.add(bgColorLabel);</span>
+
+<span class="nc" id="L260">		addBackGround = new JButton(&quot;AddBgImage&quot;);</span>
+<span class="nc" id="L261">		addBackGround.setBounds(170,40,100,20);</span>
+<span class="nc" id="L262">		toolPanel.add(addBackGround);</span>
+
+<span class="nc" id="L264">		bgColorButton = new JButton();</span>
+<span class="nc" id="L265">		bgColorButton.setBounds(125, 40, 20, 20);</span>
+<span class="nc" id="L266">		bgColorButton.setBackground(bgColor);</span>
+<span class="nc" id="L267">		toolPanel.add(bgColorButton);</span>
+
+<span class="nc" id="L269">		objName = new JTextField();</span>
+<span class="nc" id="L270">		objName.setBounds(160, 50, 100, 20);</span>
+<span class="nc" id="L271">		designPanel.add(objName);</span>
+<span class="nc" id="L272">		objName.setColumns(10);</span>
+
+<span class="nc" id="L274">		yPosition = new JTextField();</span>
+<span class="nc" id="L275">		yPosition.setToolTipText(&quot;y Position&quot;);</span>
+<span class="nc" id="L276">		yPosition.setBounds(104, 127, 43, 20);</span>
+<span class="nc" id="L277">		designPanel.add(yPosition);</span>
+<span class="nc" id="L278">		yPosition.setText(&quot;0&quot;);</span>
+<span class="nc" id="L279">		yPosition.setColumns(10);</span>
+
+<span class="nc" id="L281">		widthTextField = new JTextField();</span>
+<span class="nc" id="L282">		widthTextField.setBounds(101, 205, 43, 20);</span>
+<span class="nc" id="L283">		designPanel.add(widthTextField);</span>
+<span class="nc" id="L284">		widthTextField.setText(&quot;0&quot;);</span>
+<span class="nc" id="L285">		widthTextField.setColumns(10);</span>
+
+<span class="nc" id="L287">		xPosition = new JTextField();</span>
+<span class="nc" id="L288">		xPosition.setToolTipText(&quot;x Position&quot;);</span>
+<span class="nc" id="L289">		xPosition.setBounds(38, 127, 43, 20);</span>
+<span class="nc" id="L290">		designPanel.add(xPosition);</span>
+<span class="nc" id="L291">		xPosition.setText(&quot;0&quot;);</span>
+<span class="nc" id="L292">		xPosition.setColumns(10);</span>
+
+<span class="nc" id="L294">		heightTextField = new JTextField();</span>
+<span class="nc" id="L295">		heightTextField.setBounds(203, 205, 43, 20);</span>
+<span class="nc" id="L296">		designPanel.add(heightTextField);</span>
+<span class="nc" id="L297">		heightTextField.setText(&quot;0&quot;);</span>
+<span class="nc" id="L298">		heightTextField.setColumns(10);</span>
+
+<span class="nc" id="L300">		color = Color.BLACK;</span>
+
+<span class="nc" id="L302">		colorButton = new JButton();</span>
+<span class="nc" id="L303">		colorButton.setBounds(188, 126, 20, 20);</span>
+<span class="nc" id="L304">		colorButton.setBackground(color);</span>
+<span class="nc" id="L305">		designPanel.add(colorButton);</span>
+
+//		shapeLabel = new JLabel(&quot;Shape&quot;);
+//		shapeLabel.setBounds(25, 25, 56, 16);
+//		designPanel.add(shapeLabel);
+		
+<span class="nc" id="L311">		addShape = new JButton(&quot;AddTile&quot;);</span>
+<span class="nc" id="L312">		addShape.setBounds(25, 25, 100, 25);</span>
+<span class="nc" id="L313">		designPanel.add(addShape);</span>
+			
+		
+<span class="nc" id="L316">		nameLabel = new JLabel(&quot;Name&quot;);</span>
+<span class="nc" id="L317">		nameLabel.setBounds(160, 25, 56, 16);</span>
+<span class="nc" id="L318">		designPanel.add(nameLabel);</span>
+
+<span class="nc" id="L320">		positionLabel = new JLabel(&quot;Position&quot;);</span>
+<span class="nc" id="L321">		positionLabel.setBounds(59, 98, 56, 16);</span>
+<span class="nc" id="L322">		designPanel.add(positionLabel);</span>
+
+<span class="nc" id="L324">		colorLabel = new JLabel(&quot;Color&quot;);</span>
+<span class="nc" id="L325">		colorLabel.setBounds(190, 98, 56, 16);</span>
+<span class="nc" id="L326">		designPanel.add(colorLabel);</span>
+
+<span class="nc" id="L328">		widthLabel = new JLabel(&quot;Width&quot;);</span>
+<span class="nc" id="L329">		widthLabel.setBounds(54, 207, 43, 16);</span>
+<span class="nc" id="L330">		designPanel.add(widthLabel);</span>
+
+<span class="nc" id="L332">		heightLabel = new JLabel(&quot;Height&quot;);</span>
+<span class="nc" id="L333">		heightLabel.setBounds(156, 207, 43, 16);</span>
+<span class="nc" id="L334">		designPanel.add(heightLabel);</span>
+
+<span class="nc" id="L336">		dimensionLabel = new JLabel(&quot;Dimensions&quot;);</span>
+<span class="nc" id="L337">		dimensionLabel.setBounds(110, 178, 69, 16);</span>
+<span class="nc" id="L338">		designPanel.add(dimensionLabel);</span>
+
+<span class="nc" id="L340">		windowLabel = new JLabel(&quot;Boundary Event&quot;);</span>
+<span class="nc" id="L341">		windowLabel.setBounds(148, 354, 133, 16);</span>
+<span class="nc" id="L342">		toolPanel.add(windowLabel);</span>
+
+<span class="nc" id="L344">		windowBox = new JComboBox();</span>
+<span class="nc" id="L345">		windowBox.setBounds(149, 375, 120, 22);</span>
+<span class="nc" id="L346">		toolPanel.add(windowBox);</span>
+
+<span class="nc" id="L348">		behaviourPanel = new JPanel();</span>
+<span class="nc" id="L349">		behaviourPanel.setBorder(new TitledBorder(null, &quot;Behaviour&quot;, TitledBorder.CENTER, TitledBorder.TOP));</span>
+<span class="nc" id="L350">		behaviourPanel.setBounds(6, 331, 298, 280);</span>
+<span class="nc" id="L351">		toolPanel.add(behaviourPanel);</span>
+
+
+
+<span class="nc" id="L355">	}</span>
+
+	public void buildToolPanel() {
+<span class="nc" id="L358">		String[] shapes = { &quot;Circle&quot;, &quot;Rectangle&quot;, &quot;Triangle&quot;};//, &quot;Soccer&quot;, &quot;SpaceShip&quot;, &quot;SpaceInvader&quot;,&quot;Frogger&quot; };</span>
+<span class="nc" id="L359">		String dirPath = System.getProperty(&quot;user.dir&quot;) + File.separator + &quot;GameData&quot; + File.separator + &quot;images&quot; + File.separator;</span>
+
+<span class="nc" id="L361">		Vector model = new Vector();</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">		for (int index = 0; index &lt; shapes.length; index++) {</span>
+<span class="nc" id="L363">			String imagePath = dirPath + shapes[index] + &quot;.png&quot;;</span>
+<span class="nc" id="L364">			model.addElement(new ShapesModel(new ImageIcon(imagePath), shapes[index]));</span>
+		}
+
+<span class="nc" id="L367">		shapeBox = new JComboBox(model);</span>
+<span class="nc" id="L368">		shapeBox.setBounds(25, 50, 80, 20);</span>
+<span class="nc" id="L369">		designPanel.add(shapeBox);</span>
+<span class="nc" id="L370">		shapeBox.setRenderer(new ItemRenderer());</span>
+
+<span class="nc" id="L372">		String[] movements = { &quot;No Movement&quot;, &quot;Automatic Movement&quot;, &quot;Horizontal (Arrows)&quot;,&quot;Horizontal (A,D)&quot;, &quot;Vertical (Arrows)&quot;,&quot;Vertical (W,S)&quot;,&quot;Horizontal &amp; Vertical (Arrows)&quot;,&quot;Horizontal &amp; Vertical (A,D,W,S)&quot;};</span>
+<span class="nc" id="L373">		String[] actions = {&quot;No Action&quot;, &quot;ShootUp&quot;, &quot;ShootDown&quot;, &quot;ShootLeft&quot;, &quot;ShootRight&quot;, &quot;ShootAll (T,F,G,H)&quot;};</span>
+<span class="nc" id="L374">		String[] reactions = { &quot;No Event&quot;, &quot;Bounce&quot;, &quot;Explode&quot;, &quot;Stick&quot; };</span>
+
+<span class="nc" id="L376">		movementBox.setModel(new DefaultComboBoxModel(movements));</span>
+<span class="nc" id="L377">		actionBox.setModel(new DefaultComboBoxModel(actions));</span>
+<span class="nc" id="L378">		eventBox.setModel(new DefaultComboBoxModel(reactions));</span>
+
+<span class="nc" id="L380">		String[] boundaryOptions = { &quot;No Boundary Event&quot;, &quot;Bounce&quot;, &quot;Leave Forever&quot;, &quot;Come Through&quot;,&quot;Move Down Boundary Interaction&quot; };</span>
+<span class="nc" id="L381">		windowBox.setModel(new DefaultComboBoxModel(boundaryOptions));</span>
+
+<span class="nc" id="L383">		String[] gameOptions = { &quot;No Win/Lose&quot;, &quot;Win&quot;, &quot;Lose&quot; };</span>
+<span class="nc" id="L384">		gameOptionBox.setModel(new DefaultComboBoxModel(gameOptions));</span>
+
+<span class="nc" id="L386">		playButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+<span class="nc" id="L391">				    gamePanel.startGame();</span>
+				   
+				
+<span class="nc" id="L394">			}</span>
+		});
+		// to add multiple reactions to the same component (eg: pacman bounces off the ball and eats the food)
+<span class="nc" id="L397">		addReaction.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//				Object obj[] = reactionsWith.getSelectedValues();
+				//				System.out.println(obj);
+				//				/*for(int i=0; i&lt;obj.length;i++) {
+				//					
+				//				}*/
+<span class="nc" id="L406">				String eventWithString = (String) eventWithBox.getSelectedItem();</span>
+<span class="nc" id="L407">				String reactionString = (String) eventBox.getSelectedItem();</span>
+
+<span class="nc bnc" id="L409" title="All 4 branches missed.">				switch (reactionString) {</span>
+				case (&quot;Explode&quot;):
+<span class="nc" id="L411">					reaction = new ExplodeReaction();					</span>
+<span class="nc" id="L412">				break;</span>
+				case (&quot;Bounce&quot;):
+<span class="nc" id="L414">					reaction = new BounceReaction();</span>
+<span class="nc" id="L415">				break;</span>
+				case (&quot;Stick&quot;):
+<span class="nc" id="L417">					reaction = new StickReaction();</span>
+<span class="nc" id="L418">				break;</span>
+				default:
+<span class="nc" id="L420">					reaction = new NoReaction();</span>
+				}
+
+<span class="nc" id="L423">				Map&lt;String, Component&gt; compMap = group.getComponentMap();</span>
+<span class="nc bnc" id="L424" title="All 2 branches missed.">				if (eventWithString.equals(&quot;All&quot;)) {</span>
+<span class="nc bnc" id="L425" title="All 2 branches missed.">					for(Map.Entry&lt;String, Component&gt; comp : compMap.entrySet()) {</span>
+<span class="nc" id="L426">						reactMap.put(compMap.get(comp.getKey()), reaction);</span>
+<span class="nc" id="L427">					}</span>
+				}
+				else {
+<span class="nc" id="L430">					reactMap.put(compMap.get(eventWithString), reaction);</span>
+<span class="nc" id="L431">					System.out.println(reactMap);</span>
+
+				}
+
+
+<span class="nc" id="L436">			}</span>
+
+		});
+
+<span class="nc" id="L440">		addButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L444">				String shapeString = ((ShapesModel) shapeBox.getSelectedItem()).getName();</span>
+<span class="nc" id="L445">				String movementString = (String) movementBox.getSelectedItem();</span>
+<span class="nc" id="L446">				String actionString = (String) actionBox.getSelectedItem();</span>
+<span class="nc" id="L447">				String reactionString = (String) eventBox.getSelectedItem();</span>
+<span class="nc" id="L448">				String boundaryString = (String) windowBox.getSelectedItem();</span>
+<span class="nc" id="L449">				String eventWithString = (String) eventWithBox.getSelectedItem();</span>
+<span class="nc" id="L450">				int positionX = Integer.parseInt(xPosition.getText());</span>
+<span class="nc" id="L451">				int positionY = Integer.parseInt(yPosition.getText());</span>
+<span class="nc" id="L452">				String componentName = objName.getText();</span>
+<span class="nc" id="L453">				int componentHeight = Integer.parseInt(heightTextField.getText());</span>
+<span class="nc" id="L454">				int componentWidth = Integer.parseInt(widthTextField.getText());</span>
+<span class="nc" id="L455">				String gameOption= (String) gameOptionBox.getSelectedItem();</span>
+<span class="nc" id="L456">				HashMap&lt;Component,Reaction &gt; map1 = new HashMap&lt;&gt;(); </span>
+				
+<span class="nc bnc" id="L458" title="All 2 branches missed.">				if ( !isTileDynamic ){</span>
+<span class="nc bnc" id="L459" title="All 4 branches missed.">					switch (shapeString) {</span>
+					case &quot;Circle&quot;:
+<span class="nc" id="L461">						component = new Circle(color, positionX, positionY, componentWidth, componentHeight);</span>
+<span class="nc" id="L462">						break;</span>
+					case &quot;Rectangle&quot;:
+<span class="nc" id="L464">						component = new Rectangle(color, positionX, positionY, componentWidth, componentHeight);</span>
+<span class="nc" id="L465">						break;</span>
+					case &quot;Triangle&quot;:
+<span class="nc" id="L467">						component = new Triangle(color, positionX, positionY, componentWidth, componentHeight);</span>
+<span class="nc" id="L468">						break;</span>
+//					case &quot;Soccer&quot;:
+//						component = new ImageSprite(&quot;soccer.png&quot;, positionX, positionY, componentWidth, componentHeight);
+//						break;
+//					case &quot;SpaceShip&quot;:
+//						component = new ImageSprite(&quot;SpaceShip.png&quot;, positionX, positionY, componentWidth, componentHeight);
+//						break;
+//					case &quot;SpaceInvader&quot;:
+//						component = new ImageSprite(&quot;SpaceInvader.png&quot;, positionX, positionY, componentWidth, componentHeight);
+//						break;
+//					case &quot;Frogger&quot;:
+//						component = new ImageSprite(&quot;Frogger.png&quot;, positionX, positionY, componentWidth, componentHeight);
+//						break;
+					default:
+<span class="nc" id="L482">						break;</span>
+					}
+				}
+				else
+				{
+<span class="nc" id="L487">					component = new ImageSprite(tileFile, positionX, positionY, componentWidth, componentHeight);</span>
+<span class="nc" id="L488">					isTileDynamic = false;</span>
+				}
+					
+<span class="nc" id="L491">				component.setName(componentName);</span>
+<span class="nc" id="L492">				group.addComponent(component.getName(), component);</span>
+				
+<span class="nc" id="L494">				populateEventsWithCombo();</span>
+
+				//listModel.addElement(componentName);
+
+				//}
+
+<span class="nc" id="L500">				gamePanel.drawComponents(group);</span>
+
+<span class="nc bnc" id="L502" title="All 8 branches missed.">				switch (movementString) {</span>
+				case (&quot;Automatic Movement&quot;):
+<span class="nc" id="L504">					component.setMovement(new AutomaticMovement(Integer.parseInt(speedX.getText()),</span>
+<span class="nc" id="L505">							Integer.parseInt(speedY.getText())));</span>
+<span class="nc" id="L506">				break;</span>
+				case (&quot;Horizontal (Arrows)&quot;):
+<span class="nc" id="L508">					component.setMovement(</span>
+<span class="nc" id="L509">							new HorizontalMovement(Math.abs(Integer.parseInt(speedX.getText())), &quot;arrows&quot;));</span>
+<span class="nc" id="L510">				break;</span>
+				case (&quot;Horizontal (A,D)&quot;):
+<span class="nc" id="L512">					component.setMovement(new HorizontalMovement(Math.abs(Integer.parseInt(speedX.getText())), &quot;keys&quot;));</span>
+<span class="nc" id="L513">				break;</span>
+				case (&quot;Vertical (Arrows)&quot;):
+<span class="nc" id="L515">					component.setMovement(new VerticalMovement(Math.abs(Integer.parseInt(speedY.getText())), &quot;arrows&quot;));</span>
+<span class="nc" id="L516">				break;</span>
+				case (&quot;Vertical (W,S)&quot;):
+<span class="nc" id="L518">					component.setMovement(new VerticalMovement(Math.abs(Integer.parseInt(speedY.getText())), &quot;keys&quot;));</span>
+<span class="nc" id="L519">				break;</span>
+				case (&quot;Horizontal &amp; Vertical (Arrows)&quot;):
+<span class="nc" id="L521">					component.setMovement(new HorizontalVerticalKeyMovements(Math.abs(Integer.parseInt(speedX.getText())),Math.abs(Integer.parseInt(speedY.getText())),&quot;arrows&quot;));</span>
+<span class="nc" id="L522">				break;</span>
+				case (&quot;Horizontal &amp; Vertical (A,D,W,S)&quot;):
+<span class="nc" id="L524">					component.setMovement(new HorizontalVerticalKeyMovements(Math.abs(Integer.parseInt(speedX.getText())),Math.abs(Integer.parseInt(speedY.getText())),&quot;keys&quot;));</span>
+<span class="nc" id="L525">				break;</span>
+				default:
+<span class="nc" id="L527">					component.setMovement(new NoMovement());</span>
+				}
+
+<span class="nc" id="L530">				Action action = new NoAction();</span>
+<span class="nc bnc" id="L531" title="All 2 branches missed.">				switch (actionString) {</span>
+				case (&quot;ShootUp&quot;):
+				case (&quot;ShootDown&quot;):
+				case (&quot;ShootLeft&quot;):
+				case (&quot;ShootRight&quot;):
+				case (&quot;ShootAll (T,F,G,H)&quot;):	
+<span class="nc" id="L537">					action = new Shoot(group, actionString);</span>
+<span class="nc" id="L538">				break;</span>
+				default:
+					break;
+				}
+<span class="nc" id="L542">				component.setAction(action);</span>
+
+<span class="nc bnc" id="L544" title="All 4 branches missed.">				switch (reactionString) {</span>
+				case (&quot;Explode&quot;):
+<span class="nc" id="L546">					reaction = new ExplodeReaction();					</span>
+<span class="nc" id="L547">				break;</span>
+				case (&quot;Bounce&quot;):
+<span class="nc" id="L549">					reaction = new BounceReaction();</span>
+<span class="nc" id="L550">				break;</span>
+				case (&quot;Stick&quot;):
+<span class="nc" id="L552">					reaction = new StickReaction();</span>
+<span class="nc" id="L553">				break;</span>
+				default:
+<span class="nc" id="L555">					reaction = new NoReaction();</span>
+				}
+
+
+
+<span class="nc bnc" id="L560" title="All 2 branches missed.">				if(!reactMap.isEmpty()) {</span>
+<span class="nc" id="L561">					component.setReactionsMap(reactMap);</span>
+<span class="nc" id="L562">					reactMap.clear();</span>
+				}
+				else {
+<span class="nc" id="L565">					component.setReaction(reaction);</span>
+				}
+
+
+<span class="nc bnc" id="L569" title="All 5 branches missed.">				switch (boundaryString) {</span>
+				case (&quot;Bounce&quot;):
+<span class="nc" id="L571">					boundaryInteraction = new BounceBoundaryInteraction();</span>
+<span class="nc" id="L572">				break;</span>
+				case (&quot;Leave Forever&quot;):
+<span class="nc" id="L574">					boundaryInteraction = new LeaveForeverBoundaryInteraction();</span>
+<span class="nc" id="L575">				break;</span>
+				case (&quot;Come Through&quot;):
+<span class="nc" id="L577">				{	boundaryInteraction = new ComeThroughBoundaryInteraction();</span>
+				//System.out.println(&quot;Come Through Switch Case&quot;);
+<span class="nc" id="L579">				break;</span>
+				}
+				case (&quot;Move Down Boundary Interaction&quot;):
+<span class="nc" id="L582">					boundaryInteraction = new MoveDownBoundaryInteraction();</span>
+<span class="nc" id="L583">				break;</span>
+				default:
+<span class="nc" id="L585">					boundaryInteraction = new NoBoundaryInteraction(gamePanel, group);	</span>
+
+				}
+<span class="nc" id="L588">				component.setBoundaryInteraction(boundaryInteraction);</span>
+
+<span class="nc bnc" id="L590" title="All 3 branches missed.">				switch (gameOption) {</span>
+				case &quot;Win&quot;:
+<span class="nc" id="L592">					group.addWinning(componentName, reaction);</span>
+<span class="nc" id="L593">					break;</span>
+				case &quot;Lose&quot;:
+<span class="nc" id="L595">					group.addLosing(componentName, reaction);</span>
+<span class="nc" id="L596">					break;</span>
+				default:
+					break;
+				}
+<span class="nc" id="L600">				gamePanel.pauseGame();</span>
+
+<span class="nc" id="L602">			}</span>
+
+
+		});
+
+<span class="nc" id="L607">		saveButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L611">				GameDataOperations dataOperations = new GameDataOperations();</span>
+<span class="nc" id="L612">				System.out.println(group.getFile());</span>
+<span class="nc" id="L613">				dataOperations.saveToFile(group);</span>
+<span class="nc" id="L614">			}</span>
+		});
+
+<span class="nc" id="L617">		loadButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L621">				GameDataOperations dataOperations = new GameDataOperations();</span>
+<span class="nc" id="L622">				JFileChooser fileChooser = new JFileChooser();</span>
+<span class="nc" id="L623">				fileChooser.setCurrentDirectory(new java.io.File(dataOperations.getStoragePath()));</span>
+<span class="nc" id="L624">				int result = fileChooser.showOpenDialog(getParent());</span>
+<span class="nc" id="L625">				File selectedFile = null;</span>
+<span class="nc bnc" id="L626" title="All 2 branches missed.">				if (result == JFileChooser.APPROVE_OPTION) {</span>
+<span class="nc" id="L627">					selectedFile = fileChooser.getSelectedFile();</span>
+				}
+<span class="nc" id="L629">				group = dataOperations.readObjectFromFile(selectedFile);</span>
+<span class="nc" id="L630">				File file = group.getFile();</span>
+<span class="nc" id="L631">				System.out.println(group.getFile());</span>
+<span class="nc bnc" id="L632" title="All 2 branches missed.">				if( file != null)</span>
+				{
+					try {
+<span class="nc" id="L635">						image = ImageIO.read(group.getFile());</span>
+<span class="nc" id="L636">						gamePanel.setImage(image, true);</span>
+<span class="nc" id="L637">					} catch (IOException e1) {</span>
+						// TODO Auto-generated catch block
+<span class="nc" id="L639">						logger.error(e1.getMessage());</span>
+<span class="nc" id="L640">						e1.printStackTrace();</span>
+<span class="nc" id="L641">					}</span>
+					
+				}
+				
+<span class="nc" id="L645">				populateEventsWithCombo();</span>
+<span class="nc" id="L646">				gamePanel.drawComponents(group);</span>
+<span class="nc" id="L647">			}</span>
+		});
+
+<span class="nc" id="L650">		colorButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L654">				Color prevColor = color;</span>
+<span class="nc" id="L655">				color = JColorChooser.showDialog(null, &quot;Choose a Color&quot;, color);</span>
+<span class="nc bnc" id="L656" title="All 2 branches missed.">				if (color == null) {</span>
+<span class="nc" id="L657">					color = prevColor;</span>
+				}
+<span class="nc" id="L659">				colorButton.setBackground(color);</span>
+<span class="nc" id="L660">			}</span>
+
+		});
+
+<span class="nc" id="L664">		bgColorButton.addActionListener( new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+<span class="nc" id="L668">				Color prevColor = bgColor;</span>
+<span class="nc" id="L669">				bgColor = JColorChooser.showDialog(null, &quot;Choose a Color&quot;, bgColor);</span>
+<span class="nc bnc" id="L670" title="All 2 branches missed.">				if( bgColor == null) {</span>
+<span class="nc" id="L671">					bgColor = prevColor;</span>
+				}
+<span class="nc" id="L673">				bgColorButton.setBackground(bgColor);</span>
+<span class="nc" id="L674">				setBackgroundColor(bgColor);</span>
+<span class="nc" id="L675">				group.setColor(bgColor);</span>
+<span class="nc" id="L676">			}</span>
+
+		});
+		
+<span class="nc" id="L680">		addShape.addActionListener(new ActionListener() {</span>
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L684">				fileChooser = new JFileChooser();</span>
+<span class="nc" id="L685">				fileChooser.setMultiSelectionEnabled(false);</span>
+<span class="nc" id="L686">				int option = fileChooser.showOpenDialog(gamePanel);		            </span>
+<span class="nc bnc" id="L687" title="All 2 branches missed.">				if(option == JFileChooser.APPROVE_OPTION){</span>
+<span class="nc" id="L688">					file = fileChooser.getSelectedFile();</span>
+<span class="nc" id="L689">					isTileDynamic = true;</span>
+					//tileName = file.getName();
+<span class="nc" id="L691">					tileFile = file;</span>
+<span class="nc" id="L692">					System.out.println(tileName);	</span>
+				}
+				
+<span class="nc" id="L695">			}</span>
+		});
+
+<span class="nc" id="L698">		addBackGround.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L702">				fileChooser = new JFileChooser();</span>
+<span class="nc" id="L703">				fileChooser.setMultiSelectionEnabled(false);</span>
+
+
+<span class="nc bnc" id="L706" title="All 2 branches missed.">				if ( addBackGround.getText().equalsIgnoreCase(&quot;RemoveBGImage&quot;))</span>
+				{
+<span class="nc" id="L708">					gamePanel.removeImage(false);</span>
+<span class="nc" id="L709">					gamePanel.isSetBgColor(true);</span>
+<span class="nc" id="L710">					addBackGround.setText(&quot;AddBgImage&quot;);</span>
+<span class="nc" id="L711">					gamePanel.revalidate();</span>
+<span class="nc" id="L712">					gamePanel.repaint();	</span>
+				}
+				else
+				{
+<span class="nc" id="L716">					int option = fileChooser.showOpenDialog(gamePanel);		            </span>
+<span class="nc bnc" id="L717" title="All 2 branches missed.">					if(option == JFileChooser.APPROVE_OPTION){</span>
+<span class="nc" id="L718">						file = fileChooser.getSelectedFile();</span>
+						
+						try 
+						{
+<span class="nc" id="L722">							image = ImageIO.read(file);</span>
+<span class="nc" id="L723">							gamePanel.setImage(image,true);</span>
+<span class="nc" id="L724">							gamePanel.isSetBgColor(false);</span>
+<span class="nc" id="L725">							addBackGround.setText(&quot;RemoveBGImage&quot;);</span>
+<span class="nc" id="L726">							System.out.println(&quot;calling revalidate&quot;);</span>
+<span class="nc" id="L727">							gamePanel.revalidate();</span>
+<span class="nc" id="L728">							gamePanel.repaint();</span>
+<span class="nc" id="L729">							group.setFile(file);</span>
+<span class="nc" id="L730">							System.out.println(group.getFile());</span>
+<span class="nc" id="L731">							group.setBackGroundImage(image);</span>
+						}
+<span class="nc" id="L733">						catch (IOException e1) </span>
+						{
+<span class="nc" id="L735">							logger.error(e1.getMessage());</span>
+<span class="nc" id="L736">						}</span>
+					}
+				}
+
+<span class="nc" id="L740">			}</span>
+
+		});
+
+<span class="nc" id="L744">		clearButton.addActionListener(new ActionListener() {</span>
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L748">				resetForm();</span>
+
+<span class="nc" id="L750">			}</span>
+		});
+<span class="nc" id="L752">	}</span>
+
+	public void setBackgroundColor(Color color)
+	{
+<span class="nc" id="L756">		gamePanel.setBackground(color);</span>
+<span class="nc" id="L757">		gamePanel.isSetBgColor(true);</span>
+<span class="nc" id="L758">		gamePanel.removeImage(false);</span>
+
+<span class="nc" id="L760">	}</span>
+	public void resetForm()
+	{
+		//reset the entire form here
+<span class="nc" id="L764">		objName.setText(&quot;&quot;);</span>
+<span class="nc" id="L765">		yPosition.setText(&quot;&quot;);</span>
+<span class="nc" id="L766">		widthTextField.setText(&quot;&quot;);</span>
+<span class="nc" id="L767">		xPosition.setText(&quot;&quot;);</span>
+<span class="nc" id="L768">		heightTextField.setText(&quot;&quot;);</span>
+<span class="nc" id="L769">		speedX.setText(&quot;&quot;);</span>
+<span class="nc" id="L770">		speedY.setText(&quot;&quot;);</span>
+<span class="nc" id="L771">		movementBox.setSelectedIndex(0);</span>
+<span class="nc" id="L772">		eventBox.setSelectedIndex(0);</span>
+<span class="nc" id="L773">		shapeBox.setSelectedIndex(0);</span>
+<span class="nc" id="L774">		windowBox.setSelectedIndex(0);</span>
+<span class="nc" id="L775">		actionBox.setSelectedIndex(0);</span>
+<span class="nc" id="L776">		gameOptionBox.setSelectedIndex(0);</span>
+<span class="nc" id="L777">	}</span>
+	
+	public void populateEventsWithCombo(){
+<span class="nc" id="L780">		Map&lt;String, Component&gt; map = group.getComponentMap();</span>
+		//eventWithBox.setModel(new DefaultComboBoxModel((Vector) componentMap.keySet()));
+<span class="nc bnc" id="L782" title="All 2 branches missed.">		for (Map.Entry&lt;String, Component&gt; comp : map.entrySet()) {</span>
+
+
+<span class="nc bnc" id="L785" title="All 2 branches missed.">		if(eventsWithModel.getIndexOf(comp.getKey()) == -1 ) {</span>
+<span class="nc" id="L786">			eventsWithModel.addElement(comp.getKey());</span>
+		}
+<span class="nc bnc" id="L788" title="All 2 branches missed.">		if (eventsWithModel.getSize()==2) {</span>
+<span class="nc" id="L789">			eventsWithModel.addElement(&quot;All&quot;);</span>
+		}
+<span class="nc" id="L791">		}</span>
+<span class="nc" id="L792">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

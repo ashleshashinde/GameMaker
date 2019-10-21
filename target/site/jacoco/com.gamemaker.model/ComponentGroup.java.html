@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ComponentGroup.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.model</a> &gt; <span class="el_source">ComponentGroup.java</span></div><h1>ComponentGroup.java</h1><pre class="source lang-java linenums">package com.gamemaker.model;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Map;
+import java.util.Set;
+
+import com.gamemaker.GamePanel;
+import com.gamemaker.behavior.Reaction;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+
+public class ComponentGroup extends Component {
+
+	private static final long serialVersionUID = 1L;
+	private Map&lt;String, Component&gt; componentMap;
+	private Map&lt;String, Reaction&gt; winMap;
+	private Map&lt;String, Reaction&gt; loseMap;
+	
+	private Color backgroundColor;
+	private BufferedImage backGroundImage;
+	private File file;
+
+	
+	public Color getBackgroundColor() {
+<span class="nc" id="L31">		return backgroundColor;</span>
+	}
+
+	public void setBackgroundColor(Color backgroundColor) {
+<span class="nc" id="L35">		this.backgroundColor = backgroundColor;</span>
+<span class="nc" id="L36">	}</span>
+
+	public File getFile() {
+<span class="fc" id="L39">		return file;</span>
+	}
+
+	public void setFile(File file) {
+<span class="nc" id="L43">		this.file = file;</span>
+<span class="nc" id="L44">	}</span>
+
+	public BufferedImage getBackGroundImage() {
+<span class="nc" id="L47">		return backGroundImage;</span>
+	}
+
+	public void setBackGroundImage(BufferedImage backGroundImage) {
+<span class="nc" id="L51">		this.backGroundImage = backGroundImage;</span>
+<span class="nc" id="L52">	}</span>
+
+	public Color getColor() {
+<span class="fc" id="L55">		return backgroundColor;</span>
+	}
+
+	@Override
+	public void setColor(Color color) {
+<span class="nc" id="L60">		this.backgroundColor = color;</span>
+<span class="nc" id="L61">	}</span>
+
+	public ComponentGroup()
+<span class="fc" id="L64">	{</span>
+<span class="fc" id="L65">		componentMap = new HashMap&lt;String, Component&gt;();</span>
+<span class="fc" id="L66">		winMap = new HashMap&lt;String, Reaction&gt;();</span>
+<span class="fc" id="L67">		loseMap= new HashMap&lt;String, Reaction&gt;();</span>
+<span class="fc" id="L68">	}</span>
+	
+	@Override
+	public void draw(Graphics2D g2d) {
+<span class="nc bnc" id="L72" title="All 2 branches missed.">		for (Map.Entry&lt;String, Component&gt; entry : componentMap.entrySet()) {</span>
+			// Get component from each entry and call component.draw() method
+<span class="nc" id="L74">			entry.getValue().draw(g2d);</span>
+<span class="nc" id="L75">		}</span>
+<span class="nc" id="L76">	}</span>
+	
+	public void addComponent(String name, Component component)
+	{
+<span class="fc" id="L80">		componentMap.put(name, component);</span>
+<span class="fc" id="L81">	}</span>
+	
+	public void removeComponent(Component component)
+	{
+		// Remove component from hash map by its name
+<span class="nc" id="L86">		componentMap.remove(component.getName());</span>
+<span class="nc" id="L87">	}</span>
+	
+	public Map&lt;String, Component&gt; getComponentMap() {
+<span class="fc" id="L90">		return componentMap;</span>
+	}
+
+	public void setComponentMap(Map&lt;String, Component&gt; componentMap) {
+<span class="nc" id="L94">		this.componentMap = componentMap;</span>
+<span class="nc" id="L95">	}</span>
+
+	public Map&lt;String, Reaction&gt; getWinMap() {
+<span class="fc" id="L98">		return winMap;</span>
+	}
+
+	public void setWinMap(Map&lt;String, Reaction&gt; winMap) {
+<span class="nc" id="L102">		this.winMap = winMap;</span>
+<span class="nc" id="L103">	}</span>
+
+	public Map&lt;String, Reaction&gt; getLoseMap() {
+<span class="fc" id="L106">		return loseMap;</span>
+	}
+
+	public void setLoseMap(Map&lt;String, Reaction&gt; loseMap) {
+<span class="nc" id="L110">		this.loseMap = loseMap;</span>
+<span class="nc" id="L111">	}</span>
+
+	public void addWinning(String name,Reaction reaction)
+	{
+<span class="fc" id="L115">		winMap.put(name, reaction);</span>
+<span class="fc" id="L116">	}</span>
+	
+	public void addLosing(String name,Reaction reaction) {
+<span class="nc" id="L119">		loseMap.put(name, reaction);</span>
+<span class="nc" id="L120">	}</span>
+	
+	public void update(Graphics2D g, GamePanel panel) throws InterruptedException
+	{
+<span class="nc" id="L124">		Set&lt;Component&gt; deadSet = new HashSet&lt;&gt;();</span>
+<span class="nc" id="L125">		Set&lt;Component&gt; stopSet = new HashSet&lt;&gt;();</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">		for (Map.Entry&lt;String, Component&gt; entry : componentMap.entrySet()) {</span>
+			//System.out.println(entry);
+<span class="nc" id="L128">			Component c = entry.getValue();</span>
+<span class="nc" id="L129">			c.move();</span>
+<span class="nc" id="L130">			c.act(panel);</span>
+<span class="nc" id="L131">			c.boundaryInteract(panel);</span>
+			
+<span class="nc" id="L133">			HashMap&lt;Component,Reaction &gt; map = c.getReactionsMap(); </span>
+			
+<span class="nc bnc" id="L135" title="All 2 branches missed.">			if (map.isEmpty())</span>
+			{
+<span class="nc" id="L137">				c.react(this);</span>
+				
+			}
+			else {
+				//System.out.println(&quot;component group&quot;);
+<span class="nc bnc" id="L142" title="All 2 branches missed.">				for (Map.Entry&lt;Component,Reaction&gt; comp : map.entrySet()) {</span>
+					
+<span class="nc bnc" id="L144" title="All 4 branches missed.">					if (comp.getKey()!=null &amp;&amp; !c.equals(comp.getKey()))</span>
+<span class="nc" id="L145">						comp.getValue().reactNew(c, comp.getKey(), panel);</span>
+					
+					
+<span class="nc" id="L148">				}</span>
+			}
+			//System.out.println(map);
+			//c.react(this);
+<span class="nc bnc" id="L152" title="All 2 branches missed.">			if (c.getStatus().equals(&quot;dead&quot;)) {</span>
+<span class="nc" id="L153">				deadSet.add(c);</span>
+<span class="nc" id="L154">				map.remove(c);</span>
+			}
+<span class="nc bnc" id="L156" title="All 2 branches missed.">			if(c.getStatus().equals(&quot;bounced&quot;))</span>
+<span class="nc" id="L157">				stopSet.add(c);</span>
+			
+<span class="nc" id="L159">		}</span>
+			
+		//check game end conditions for explode events
+<span class="nc bnc" id="L162" title="All 2 branches missed.">		for (Component deadComponent : deadSet) {</span>
+			//System.out.println(deadComponent);
+<span class="nc" id="L164">			panel.removeKeyListener((KeyListener)deadComponent.getMovement());</span>
+<span class="nc" id="L165">			panel.removeKeyListener((KeyListener)deadComponent.getAction());</span>
+			
+<span class="nc" id="L167">			mapHelper(deadComponent.getName(), panel);</span>
+<span class="nc" id="L168">			this.removeComponent(deadComponent);</span>
+<span class="nc" id="L169">		}</span>
+		
+		//check game end conditions for all other events
+<span class="nc bnc" id="L172" title="All 2 branches missed.">		for (Component oneComponent : stopSet) {	</span>
+<span class="nc" id="L173">			mapHelper(oneComponent.getName(), panel);		</span>
+<span class="nc" id="L174">		}</span>
+<span class="nc" id="L175">		this.draw(g);</span>
+<span class="nc" id="L176">	}</span>
+	
+	private void mapHelper(String componentName, GamePanel panel) {
+		//System.out.println(winMap);
+<span class="nc bnc" id="L180" title="All 2 branches missed.">		if(winMap.containsKey(componentName)) {</span>
+<span class="nc" id="L181">			winMap.remove(componentName);</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">			if(winMap.size()==0)</span>
+<span class="nc" id="L183">				panel.stopGame(&quot;WIN&quot;);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">		} else if (loseMap.containsKey(componentName)) {</span>
+<span class="nc" id="L185">			loseMap.remove(componentName);</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">			if(loseMap.size()==0)</span>
+<span class="nc" id="L187">				panel.stopGame(&quot;LOSE&quot;);</span>
+		}	
+<span class="nc" id="L189">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

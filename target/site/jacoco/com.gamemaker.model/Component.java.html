@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Component.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Team-1-Week8</a> &gt; <a href="index.source.html" class="el_package">com.gamemaker.model</a> &gt; <span class="el_source">Component.java</span></div><h1>Component.java</h1><pre class="source lang-java linenums">package com.gamemaker.model;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import javax.swing.JPanel;
+
+import com.gamemaker.GamePanel;
+import com.gamemaker.behavior.Action;
+import com.gamemaker.behavior.BoundaryInteraction;
+import com.gamemaker.behavior.ComeThroughBoundaryInteraction;
+import com.gamemaker.behavior.Movement;
+import com.gamemaker.behavior.Reaction;
+
+<span class="fc" id="L19">public abstract class Component implements Serializable {</span>
+
+	private static final long serialVersionUID = 1L;
+	protected Shape shape;
+	protected double positionX;
+	protected double positionY;
+	protected Movement movement;
+	protected Action action;
+	protected Reaction reaction;
+	protected BoundaryInteraction boundaryInteraction;
+	protected String name;
+	protected Color color;
+	protected String status;
+	protected double height;
+	protected double width;
+	//private static HashMap&lt;String,ArrayList&lt;Object&gt;&gt; hash = new HashMap&lt;&gt;();
+<span class="fc" id="L35">	protected HashMap&lt;Component,Reaction &gt; map = new HashMap&lt;&gt;(); </span>
+	
+	public double getHeight() {
+<span class="fc" id="L38">		return height;</span>
+	}
+
+	public void setHeight(double height) {
+<span class="nc" id="L42">		this.height = height;</span>
+<span class="nc" id="L43">	}</span>
+
+	public double getWidth() {
+<span class="fc" id="L46">		return width;</span>
+	}
+
+	public void setWidth(double width) {
+<span class="nc" id="L50">		this.width = width;</span>
+<span class="nc" id="L51">	}</span>
+
+	public String getStatus() {
+<span class="fc" id="L54">		return status;</span>
+	}
+
+	public void setStatus(String status) {
+<span class="fc" id="L58">		this.status = status;</span>
+<span class="fc" id="L59">	}</span>
+
+	public double getPositionX() {
+<span class="fc" id="L62">		return positionX;</span>
+	}
+
+	public void setPositionX(double positionX) {
+<span class="fc" id="L66">		this.positionX = positionX;</span>
+<span class="fc" id="L67">	}</span>
+
+	public double getPositionY() {
+<span class="fc" id="L70">		return positionY;</span>
+	}
+
+	public void setPositionY(double positionY) {
+<span class="fc" id="L74">		this.positionY = positionY;</span>
+<span class="fc" id="L75">	}</span>
+
+	public void setColor(Color color) {
+<span class="fc" id="L78">		this.color = color;</span>
+<span class="fc" id="L79">	}</span>
+	
+	public Color getColor() {
+<span class="fc" id="L82">		return this.color;</span>
+	}
+	public Shape getShape() {
+<span class="fc" id="L85">		return shape;</span>
+	}
+
+	public String getName() {
+<span class="fc" id="L89">		return name;</span>
+	}
+
+	public void setName(String name) {
+<span class="fc" id="L93">		this.name = name;</span>
+<span class="fc" id="L94">	}</span>
+
+	public Reaction getReaction() {
+<span class="fc" id="L97">		return reaction;</span>
+	}
+
+	public void setReaction(Reaction reaction) {
+<span class="fc" id="L101">		this.reaction = reaction;</span>
+<span class="fc" id="L102">	}</span>
+
+	public Movement getMovement() {
+<span class="fc" id="L105">		return movement;</span>
+	}
+
+	public void setMovement(Movement movement) {
+<span class="fc" id="L109">		this.movement = movement;</span>
+<span class="fc" id="L110">	}</span>
+
+	public BoundaryInteraction getBoundaryInteraction() {
+<span class="fc" id="L113">		return boundaryInteraction;</span>
+	}
+
+	public void setBoundaryInteraction(BoundaryInteraction boundaryInteraction) {
+<span class="fc" id="L117">		this.boundaryInteraction = boundaryInteraction;</span>
+<span class="fc" id="L118">	}</span>
+
+	public abstract void draw(Graphics2D g2d);
+
+	public void move() {
+<span class="nc" id="L123">		this.movement.move(this);</span>
+<span class="nc" id="L124">	}</span>
+
+	public void act(GamePanel gamePanel) {
+<span class="nc" id="L127">		this.action.act(this, gamePanel);</span>
+<span class="nc" id="L128">	}</span>
+
+	public void react(ComponentGroup group) throws InterruptedException {
+<span class="nc" id="L131">		this.reaction.react(this, group);</span>
+<span class="nc" id="L132">	}</span>
+
+	public void boundaryInteract(JPanel gamePanel) throws InterruptedException {
+		//System.out.println(&quot;Boundary Interaction Called&quot;);
+<span class="nc" id="L136">		this.boundaryInteraction.execute(this, gamePanel);</span>
+<span class="nc" id="L137">	}</span>
+
+	public Action getAction() {
+<span class="nc" id="L140">		return action;</span>
+	}
+
+	public void setAction(Action action) {
+<span class="fc" id="L144">		this.action = action;</span>
+<span class="fc" id="L145">	}</span>
+	// the reactions of this component with every other component is stored in this hashmap. Thus allowing the component to have different reactions with different components
+	public void setReactionsMap(HashMap&lt;Component,Reaction &gt; map) {
+<span class="fc" id="L148">		this.map.putAll(map);</span>
+		//System.out.println(this.map);
+<span class="fc" id="L150">	}</span>
+	
+	public HashMap&lt;Component,Reaction &gt; getReactionsMap() {
+		//System.out.println(this.map);
+<span class="fc" id="L154">		return this.map;</span>
+	}
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
